@@ -43,7 +43,7 @@
                     <a href="AddLeave.html">Apply Leave</a>
                 </li>
                 <li>
-                    <a href="myLeaves.html">My Leaves</a>
+                    <a href="myLeaves.jsp">My Leaves</a>
                 </li>
             </ul>
 
@@ -70,33 +70,31 @@
   			<div class="agile-tables">
 
   				  <h3>My Leaves</h3>
-  				  <table id="table-two-axis" class="two-axis">
-  					<thead>
-  					  <tr>
-                  		<th>From Date</th>
-                  		<th>To Date</th>
-                  		<th>No of Days</th>
-                  		<th>Leave Type</th>
-                  		<th>Reason</th>
-                  		<th>Status</th>
-                  	  </tr>
-  					</thead>
-  					<tbody>
-  					  <tr th:each="leaveInfo,iterStat : ${leavesList}">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Data początkowa</th>
+                    <th scope="col">Data końcowa</th>
+                    <th scope="col">Akceptacja</th>
 
-  	                	<td th:utext="${#dates.format(leaveInfo.fromDate,'dd MMM yyyy')}"></td>
-  	                	<td th:utext="${#dates.format(leaveInfo.toDate,'dd MMM yyyy')}"></td>
-  	                	<td th:text="${leaveInfo.duration}"></td>
-  	                	<td th:text="${leaveInfo.leaveType}"></td>
-  	                	<td th:text="${leaveInfo.reason}"></td>
-  	                	<td>
-  	                		<span th:if="${leaveInfo.active}" class="label-primary" style="color: white;">PENDING</span>
-  	                		<span th:if="${!leaveInfo.active && leaveInfo.acceptRejectFlag}" class="label-success" style="color: white;">ACCEPTED</span>
-  	                		<span th:if="${!leaveInfo.active && !leaveInfo.acceptRejectFlag}" class="label-danger" style="color: white;">REJECTED</span>
-  	                	</td>
-                  	  </tr>
-  					</tbody>
-  				  </table>
+                </tr>
+                </thead>
+                <tbody>
+
+                <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">
+
+
+                    <tr>
+                        <th scope="row">${tmpHoliday.id}</th>
+                        <td>${tmpHoliday.startUrlopu}</td>
+                        <td>${tmpHoliday.koniecUrlopu}</td>
+                        <td>${tmpHoliday.akceptacja}</td>
+
+                    </tr>
+
+
+                </c:forEach>
+                </tbody>
 
   			</div>
 

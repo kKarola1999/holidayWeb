@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class DBUtil {
 
 
-     abstract List<Holiday> getResorts() throws Exception;
+     abstract List<Holiday> getHolidays() throws Exception;
 
     protected static void close(Connection conn, Statement statement, ResultSet resultSet) {
 
