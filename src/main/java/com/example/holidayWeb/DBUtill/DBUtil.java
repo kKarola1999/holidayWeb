@@ -1,5 +1,8 @@
-package com.example.holidayWeb;
+package com.example.holidayWeb.DBUtill;
 
+
+import com.example.holidayWeb.Employee;
+import com.example.holidayWeb.Holiday;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,8 +11,8 @@ import java.util.List;
 
 public abstract class DBUtil {
 
+    public abstract List<Holiday> getHolidays() throws Exception;
 
-     abstract List<Holiday> getHolidays() throws Exception;
 
     protected static void close(Connection conn, Statement statement, ResultSet resultSet) {
 
@@ -29,7 +32,6 @@ public abstract class DBUtil {
         }
 
     }
-
 
 
 }

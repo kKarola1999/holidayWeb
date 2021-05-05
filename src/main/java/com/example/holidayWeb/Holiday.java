@@ -6,15 +6,38 @@ public class Holiday {
     private int id;
     private LocalDate startUrlopu;
     private LocalDate koniecUrlopu;
-    private String akceptacja;
+    private boolean akceptacja;
     private int pracownikId;
+    private String imie_nazwisko;
 
-    public Holiday(int id, LocalDate startUrlopu, LocalDate koniecUrlopu, String akceptacja, int pracownikId) {
+
+    public Holiday(int id, LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
         this.id = id;
         this.startUrlopu = startUrlopu;
         this.koniecUrlopu = koniecUrlopu;
         this.akceptacja = akceptacja;
         this.pracownikId = pracownikId;
+        this.imie_nazwisko = imie_nazwisko;
+    }
+
+    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
+        this.startUrlopu = startUrlopu;
+        this.koniecUrlopu = koniecUrlopu;
+        this.akceptacja = akceptacja;
+        this.pracownikId = pracownikId;
+        this.imie_nazwisko = imie_nazwisko;
+    }
+
+    @Override
+    public String toString() {
+        return "Holiday{" +
+                "id=" + id +
+                ", startUrlopu=" + startUrlopu +
+                ", koniecUrlopu=" + koniecUrlopu +
+                ", akceptacja=" + akceptacja +
+                ", pracownikId=" + pracownikId +
+                ", imie_nazwisko='" + imie_nazwisko + '\'' +
+                '}';
     }
 
     public int getId() {
@@ -41,11 +64,11 @@ public class Holiday {
         this.koniecUrlopu = koniecUrlopu;
     }
 
-    public String getAkceptacja() {
+    public boolean isAkceptacja() {
         return akceptacja;
     }
 
-    public void setAkceptacja(String akceptacja) {
+    public void setAkceptacja(boolean akceptacja) {
         this.akceptacja = akceptacja;
     }
 
@@ -55,5 +78,13 @@ public class Holiday {
 
     public void setPracownikId(int pracownikId) {
         this.pracownikId = pracownikId;
+    }
+
+    public String getImie_nazwisko() {
+        return imie_nazwisko;
+    }
+
+    public void setImie_nazwisko(String imie_nazwisko) {
+        this.imie_nazwisko = imie_nazwisko;
     }
 }

@@ -3,17 +3,26 @@ package com.example.holidayWeb;
 public class Employee {
     private int id;
     private String name;
-    private double seniority;
-    private double jobPossition;
-    private String extraDays;
+    private int seniority;
+    private String jobTime; // todo
+    private int extraDays;
     private String email;
     private String password;
 
-    public Employee(int id, String name, double seniority, double jobPossition, String extraDays, String email, String password) {
+    public Employee(String name, int seniority, String jobTime, int extraDays, String email, String password) {
+        this.name = name;
+        this.seniority = seniority;
+        this.jobTime = jobTime;
+        this.extraDays = extraDays;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Employee(int id, String name, int seniority, String jobPossition, int extraDays, String email, String password) {
         this.id = id;
         this.name = name;
         this.seniority = seniority;
-        this.jobPossition = jobPossition;
+        this.jobTime = jobPossition;
         this.extraDays = extraDays;
         this.email = email;
         this.password = password;
@@ -35,27 +44,27 @@ public class Employee {
         this.name = name;
     }
 
-    public double getSeniority() {
+    public int getSeniority() {
         return seniority;
     }
 
-    public void setSeniority(double seniority) {
+    public void setSeniority(int seniority) {
         this.seniority = seniority;
     }
 
-    public double getJobPossition() {
-        return jobPossition;
+    public String getJobTime() {
+        return jobTime;
     }
 
-    public void setJobPossition(double jobPossition) {
-        this.jobPossition = jobPossition;
+    public void setJobTime(String jobTime) {
+        this.jobTime = jobTime;
     }
 
-    public String getExtraDays() {
+    public int getExtraDays() {
         return extraDays;
     }
 
-    public void setExtraDays(String extraDays) {
+    public void setExtraDays(int extraDays) {
         this.extraDays = extraDays;
     }
 
