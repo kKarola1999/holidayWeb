@@ -1,9 +1,7 @@
 package com.example.holidayWeb.Servlets;
 
 import com.example.holidayWeb.DBUtill.EmployeUtill;
-import com.example.holidayWeb.Employee;
 import com.example.holidayWeb.Holiday;
-import jdk.vm.ci.meta.Local;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -12,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,6 +22,7 @@ public class UserServlet extends HttpServlet {
     private EmployeUtill dbUtill;
     private final String db_url = "jdbc:mysql://localhost:3306/holiday";
     private String nameUndVorname = "";
+    private int  EmployeId;
 
     @Override
     public void init (ServletConfig config) throws ServletException{
@@ -45,7 +43,7 @@ public class UserServlet extends HttpServlet {
 
             nameUndVorname = name;
 
-            dbUtill.setName(name);
+            dbUtill.setEmail(name);
             dbUtill.setPassword(password);
 
             if (validate(name, password)){
@@ -68,7 +66,11 @@ public class UserServlet extends HttpServlet {
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
         boolean akceptacja =  false;
+//        int idEmploy =  ;
         String name = nameUndVorname;
+
+//        Holiday holiday = new Holiday(start, end, akceptacja, name);
+//        dbUtill.addHoliday(holiday);
 
     }
 

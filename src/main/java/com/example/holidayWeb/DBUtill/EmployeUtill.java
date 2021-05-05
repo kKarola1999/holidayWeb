@@ -4,7 +4,6 @@ import com.example.holidayWeb.Employee;
 import com.example.holidayWeb.Holiday;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.List;
 public class EmployeUtill extends DBEmployee {
     private DataSource dataSource;
     private String URL;
-    private String name;
+    private String email;
     private String password;
     public EmployeUtill (String URL){this.dataSource = dataSource; }
 
@@ -58,9 +57,9 @@ public class EmployeUtill extends DBEmployee {
         try{
 
 
-            connection = DriverManager.getConnection(URL, name, password);
+            connection = DriverManager.getConnection(URL, this.email, password);
 
-            String sql = "SELECT * FROM urlopy where imie_nazwisko =?";
+            String sql = "SELECT * FROM urlopy where email =?";
             statement = connection.prepareStatement(sql);
 //            ((PreparedStatement) statement).setString(5,idEmploye); // todo że 5 kolumna
             resultSet =  statement.executeQuery(sql);
@@ -85,6 +84,6 @@ public class EmployeUtill extends DBEmployee {
     }
 
 
-    public void setName (String name){this.name =  name;}
+    public void setEmail(String email){this.email = email;}
     public void setPassword(String password){this.password = password;}
 }
