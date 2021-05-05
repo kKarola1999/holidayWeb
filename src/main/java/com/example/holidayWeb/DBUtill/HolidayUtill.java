@@ -36,9 +36,9 @@ public class HolidayUtill extends DBUtil {
                 LocalDate end_urlopu = resultSet.getDate("end_date").toLocalDate();
                 boolean akceptacja = resultSet.getBoolean("akceptacja");
                 int idPracownika = resultSet.getInt("Pracownicy_id");
-                String imie_nazwisko = resultSet.getString("imie_nazwisko");
+                String email = resultSet.getString("email");
 
-                urlopy.add(new Holiday(id,start_urlopu,end_urlopu,akceptacja,idPracownika,imie_nazwisko));
+                urlopy.add(new Holiday(id,start_urlopu,end_urlopu,akceptacja,idPracownika,email));
             }
         } finally {
             close(conn, statement, resultSet);

@@ -3,6 +3,7 @@ package com.example.holidayWeb.Servlets;
 import com.example.holidayWeb.DBUtill.EmployeUtill;
 import com.example.holidayWeb.Employee;
 import com.example.holidayWeb.Holiday;
+import jdk.vm.ci.meta.Local;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -16,12 +17,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/userServlet")
 public class UserServlet extends HttpServlet {
     private EmployeUtill dbUtill;
     private final String db_url = "jdbc:mysql://localhost:3306/holiday";
+    private String nameUndVorname = "";
 
     @Override
     public void init (ServletConfig config) throws ServletException{
@@ -40,6 +43,8 @@ public class UserServlet extends HttpServlet {
             String name = request.getParameter("inputEmail");
             String password =  request.getParameter("inputPassword");
 
+            nameUndVorname = name;
+
             dbUtill.setName(name);
             dbUtill.setPassword(password);
 
@@ -52,7 +57,19 @@ public class UserServlet extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                request.setAttribute("myLeaves", myLeaves);
+                dispatcher.forward(request,response);
+            }else{
+                RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
             }
+    }
+
+    private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        LocalDate start =  LocalDate.parse(request.getParameter("start"));
+        LocalDate end =  LocalDate.parse(request.getParameter("end"));
+        boolean akceptacja =  false;
+        String name = nameUndVorname;
+
     }
 
     private  boolean validate (String email, String password){

@@ -47,7 +47,7 @@ public class EmployeUtill extends DBEmployee {
         } return employes;
     }
 
-    public List<Holiday> getUserHolidays (String imie_nazwiko) throws Exception{
+    public List<Holiday> getUserHolidays (String email) throws Exception{
 
        List <Holiday> holiday = null;
 

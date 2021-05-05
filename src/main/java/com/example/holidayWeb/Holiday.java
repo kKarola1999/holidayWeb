@@ -8,24 +8,24 @@ public class Holiday {
     private LocalDate koniecUrlopu;
     private boolean akceptacja;
     private int pracownikId;
-    private String imie_nazwisko;
+    private String email;
 
 
-    public Holiday(int id, LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
+    public Holiday(int id, LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String email) {
         this.id = id;
         this.startUrlopu = startUrlopu;
         this.koniecUrlopu = koniecUrlopu;
         this.akceptacja = akceptacja;
         this.pracownikId = pracownikId;
-        this.imie_nazwisko = imie_nazwisko;
+        this.email = email;
     }
 
-    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
+    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String email) {
         this.startUrlopu = startUrlopu;
         this.koniecUrlopu = koniecUrlopu;
         this.akceptacja = akceptacja;
         this.pracownikId = pracownikId;
-        this.imie_nazwisko = imie_nazwisko;
+        this.email = email;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class Holiday {
                 ", koniecUrlopu=" + koniecUrlopu +
                 ", akceptacja=" + akceptacja +
                 ", pracownikId=" + pracownikId +
-                ", imie_nazwisko='" + imie_nazwisko + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 
@@ -80,11 +80,11 @@ public class Holiday {
         this.pracownikId = pracownikId;
     }
 
-    public String getImie_nazwisko() {
-        return imie_nazwisko;
+    public String getEmail() {
+        return email;
     }
 
-    public void setImie_nazwisko(String imie_nazwisko) {
-        this.imie_nazwisko = imie_nazwisko;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
