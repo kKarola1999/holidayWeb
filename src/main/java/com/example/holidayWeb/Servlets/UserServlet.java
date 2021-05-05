@@ -1,6 +1,7 @@
 package com.example.holidayWeb.Servlets;
 
 import com.example.holidayWeb.DBUtill.EmployeUtill;
+import com.example.holidayWeb.DBUtill.HolidayUtill;
 import com.example.holidayWeb.Holiday;
 
 import javax.servlet.RequestDispatcher;
@@ -22,7 +23,7 @@ public class UserServlet extends HttpServlet {
     private EmployeUtill dbUtill;
     private final String db_url = "jdbc:mysql://localhost:3306/holiday";
     private String nameUndVorname = "";
-    private int  EmployeId;
+    private String emploPass ="";
 
     @Override
     public void init (ServletConfig config) throws ServletException{
@@ -42,6 +43,7 @@ public class UserServlet extends HttpServlet {
             String password =  request.getParameter("inputPassword");
 
             nameUndVorname = name;
+            emploPass =password;
 
             dbUtill.setEmail(name);
             dbUtill.setPassword(password);
@@ -66,11 +68,11 @@ public class UserServlet extends HttpServlet {
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
         boolean akceptacja =  false;
-//        int idEmploy =  ;
+        int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
         String name = nameUndVorname;
 
-//        Holiday holiday = new Holiday(start, end, akceptacja, name);
-//        dbUtill.addHoliday(holiday);
+        Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
+        dbUtill.addHoliday(holiday);
 
     }
 

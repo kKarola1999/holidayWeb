@@ -3,6 +3,7 @@ package com.example.holidayWeb.DBUtill;
 import com.example.holidayWeb.Employee;
 import com.example.holidayWeb.Holiday;
 
+import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
@@ -45,13 +46,37 @@ public class EmployeUtill extends DBEmployee {
             close(connection, statement,resultSet);
         } return employes;
     }
+    public int getId(String email, String pass) throws Exception{
+        int id;
+        Connection connection = null;
+        PreparedStatement statement =null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = dataSource.getConnection();
+            String sql = "Select id from pracownicy where email=? and pass =?";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, email);
+            statement.setString(2, pass);
+            resultSet = statement.executeQuery(sql);
+            if (resultSet.first()) {
+                id = resultSet.getInt("id");
+            } else {
+                throw new Exception("There is not such user!");
+            } return id;
+        } finally {
+            close(connection,statement,resultSet);
+        }
+
+    }
+
 
     public List<Holiday> getUserHolidays (String email) throws Exception{
 
        List <Holiday> holiday = null;
 
         Connection connection =  null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try{
@@ -61,7 +86,7 @@ public class EmployeUtill extends DBEmployee {
 
             String sql = "SELECT * FROM urlopy where email =?";
             statement = connection.prepareStatement(sql);
-//            ((PreparedStatement) statement).setString(5,idEmploye); // todo że 5 kolumna
+            statement.setString(1,email);
             resultSet =  statement.executeQuery(sql);
 
             if (resultSet.next()){
@@ -81,6 +106,25 @@ public class EmployeUtill extends DBEmployee {
             close(connection, statement,resultSet);
         }
 
+    }
+
+    public void addHoliday(Holiday holiday)throws Exception{
+        Connection connection =null;
+        PreparedStatement statement=null;
+        try {
+            connection = DriverManager.getConnection(URL,email, password);
+            String sql = "Insert into holiday(start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)"+ //todo Pracownicy_id?
+                "VALUES(?, ?, ?, ?, ?)";
+            statement= connection.prepareStatement(sql);
+
+            statement.setDate(1, Date.valueOf(holiday.getStartUrlopu()));
+            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
+            statement.setBoolean(3, holiday.isAkceptacja());
+            statement.setInt(4,holiday.getPracownikId());
+            statement.setString(5, holiday.getEmail());
+        }finally {
+            close(connection,statement,null);
+        }
     }
 
 
