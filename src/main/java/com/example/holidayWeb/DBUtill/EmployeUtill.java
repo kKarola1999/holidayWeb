@@ -1,19 +1,21 @@
 package com.example.holidayWeb.DBUtill;
 
 import com.example.holidayWeb.Employee;
+import com.example.holidayWeb.Holiday;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeUtill extends DBEmployee {
     private DataSource dataSource;
-
-    public EmployeUtill (DataSource dataSource){this.dataSource = dataSource; }
+    private String URL;
+    private String name;
+    private String password;
+    public EmployeUtill (String URL){this.dataSource = dataSource; }
 
 
     @Override
@@ -44,4 +46,45 @@ public class EmployeUtill extends DBEmployee {
             close(connection, statement,resultSet);
         } return employes;
     }
+
+    public List<Holiday> getUserHolidays (String imie_nazwiko) throws Exception{
+
+       List <Holiday> holiday = null;
+
+        Connection connection =  null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try{
+
+
+            connection = DriverManager.getConnection(URL, name, password);
+
+            String sql = "SELECT * FROM urlopy where imie_nazwisko =?";
+            statement = connection.prepareStatement(sql);
+//            ((PreparedStatement) statement).setString(5,idEmploye); // todo że 5 kolumna
+            resultSet =  statement.executeQuery(sql);
+
+            if (resultSet.next()){
+                int idUrlopy =  resultSet.getInt("idUrlopy");
+                LocalDate start =  resultSet.getDate("start_urlopu").toLocalDate();
+                LocalDate end =  resultSet.getDate("end_urlopu").toLocalDate();
+                boolean akceptacja =  resultSet.getBoolean("akceptacja");
+                int idPracownika = resultSet.getInt("Praconicy_id");
+                String name = resultSet.getString("imie_nazwisko");
+
+                holiday.add( new Holiday(idUrlopy,start,end,akceptacja,idPracownika, name));
+            }else{
+                throw new Exception("You dont have any planned leaves");
+            }
+            return holiday;
+        }finally {
+            close(connection, statement,resultSet);
+        }
+
+    }
+
+
+    public void setName (String name){this.name =  name;}
+    public void setPassword(String password){this.password = password;}
 }
