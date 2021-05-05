@@ -70,6 +70,26 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    public String getPassword(String emailE) throws Exception{
+        Connection connection =null;
+        PreparedStatement statement =null;
+        ResultSet resultSet =null;
+        String DBpass ;
+        try{
+            connection=DriverManager.getConnection(URL, email, password);
+            String sql = "select password from pracownicy where email =?";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, emailE);
+            if (resultSet.first()){
+                DBpass = resultSet.getString("password");
+            } else {
+                throw new Exception("Wrong email or password.");
+            }
+            return DBpass;
+        }finally {
+            close(connection,statement,resultSet);
+        }
+    }
 
     public List<Holiday> getUserHolidays (String email) throws Exception{
 
