@@ -53,7 +53,7 @@ public class EmployeUtill extends DBEmployee {
         ResultSet resultSet = null;
 
         try {
-            connection = dataSource.getConnection();
+            connection = DriverManager.getConnection(URL,this.email,password);
             String sql = "Select id from pracownicy where email=? and pass =?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, email);
