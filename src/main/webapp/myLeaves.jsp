@@ -85,12 +85,12 @@
 
                 <c:forEach var="tmpHoliday" items="${myLeaves}">
                     <%-- definiowanie linkow--%>
-                    <c:url var="updateLink" value="AdminServlet">
+                    <c:url var="updateLink" value="UserrServlet">
                         <c:param name="command" value="LOAD"></c:param>
                         <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
                     </c:url>
 
-                    <c:url var="deleteLink" value="AdminServlet">
+                    <c:url var="deleteLink" value="UserrServlet">
                         <c:param name="command" value="DELETE"></c:param>
                         <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
                     </c:url>
@@ -105,7 +105,7 @@
                             <button type="button" class="btn btn-success">Zmień dane</button>
                         </a>
                             <a href="${deleteLink}"
-                               onclick="if(!(confirm('Czy na pewno chcesz usunąć ten telefon?'))) return false">
+                               onclick="if(!(confirm('Czy na pewno chcesz usunąć ten urlop?'))) return false">
                                 <button type="button" class="btn btn-danger">Usuń</button>
                             </a></td>
 
@@ -115,7 +115,7 @@
 
                 </c:forEach>
                 </tbody>
-            </table>
+
   			</div>
 
 

@@ -115,22 +115,17 @@ public class UserrServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("holidayID"));
         LocalDate startUrlopu = LocalDate.parse(request.getParameter("start"));
         LocalDate koniecUrlopu = LocalDate.parse(request.getParameter("end"));
-        boolean akceptacja= Boolean.parseBoolean(request.getParameter("akceptacja"));
-        int idPracownik= Integer.parseInt(request.getParameter("idPracownikaInput"));
-        String email=request.getParameter("emailInput");
 
 
-        // utworzenie nowego telefonu
-        Holiday holiday = new Holiday(id,startUrlopu,koniecUrlopu,akceptacja,idPracownik,email);
+
 
         // uaktualnienie danych w BD
-        dbUtill.updateHoliday(startUrlopu, koniecUrlopu, id, akceptacja);
+        dbUtill.updateHoliday(startUrlopu,koniecUrlopu,id);
 
         // wyslanie danych do strony z lista telefonow
         listHoliday(request, response);
 
     }
-
     private void loadHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie id telefonu z formularza
@@ -139,14 +134,29 @@ public class UserrServlet extends HttpServlet {
         // pobranie  danych telefonu z BD
         Holiday holiday = dbUtill.getHoliday(id);
 
+
+
+
+        LocalDate startDate = dbUtill.getStartDate(id);
+        LocalDate endDate = dbUtill.getEndDate(id);
+
+
+
+
         // przekazanie telefonu do obiektu request
         request.setAttribute("HOLIDAY", holiday);
+        request.setAttribute("holidayID", id);
+        request.setAttribute("end", endDate);
+        request.setAttribute("start", startDate);
 
         // wyslanie danych do formmularza JSP (update_phone_form)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday2_form.jsp");
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday_user_form.jsp");
         dispatcher.forward(request, response);
 
     }
+
+
 
     private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
@@ -163,6 +173,7 @@ public class UserrServlet extends HttpServlet {
         } else {
             RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
         }
+        listHoliday(request, response);
 
     }
     private boolean limitDni (String email, long days) throws Exception {

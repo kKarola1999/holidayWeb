@@ -322,7 +322,7 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
-    public void updateHoliday(LocalDate start,LocalDate end,int id,boolean akceptacja) throws Exception {
+    public void updateHoliday(LocalDate start,LocalDate end,int id) throws Exception {
 
         Connection conn = null;
         PreparedStatement statement = null;
