@@ -47,20 +47,20 @@ public class EmployeUtill extends DBEmployee {
             close(connection, statement,resultSet);
         } return employes;
     }
-    public int getId(String email, String pass) throws Exception{
+    public int getId(String emailE, String pass) throws Exception{
         int id;
         Connection connection = null;
         PreparedStatement statement =null;
         ResultSet resultSet = null;
 
         try {
-            connection = DriverManager.getConnection(URL,this.email,password);
-            String sql = "Select id from pracownicy where email=? and pass =?";
+            connection = DriverManager.getConnection(URL,email,password);
+            String sql = "Select id from pracownicy where email = ? and password = ?";
             statement = connection.prepareStatement(sql);
-            statement.setString(1, email);
+            statement.setString(1, emailE);
             statement.setString(2, pass);
-            resultSet = statement.executeQuery(sql);
-            if (resultSet.first()) {
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 id = resultSet.getInt("id");
             } else {
                 throw new Exception("There is not such user!");
@@ -94,7 +94,7 @@ public class EmployeUtill extends DBEmployee {
     public int usedDays(String email){
         int days =0;
         try {
-            List<Holiday> holidays =  getUserHolidays(email);
+            List<Holiday> holidays =  getUserHolidays();
             for (int i = 0; i<holidays.size();i++ ){
                 days = (int) ChronoUnit.DAYS.between(holidays.get(i).getStartUrlopu(), holidays.get(i).getKoniecUrlopu())+1;
             }
@@ -104,7 +104,7 @@ public class EmployeUtill extends DBEmployee {
         return days;
     }
 
-    public List<Holiday> getUserHolidays (String emailE) throws Exception{
+    public List<Holiday> getUserHolidays () throws Exception{
 
         List <Holiday> holiday = new ArrayList<>();
 
@@ -119,10 +119,10 @@ public class EmployeUtill extends DBEmployee {
 
             String sql = "SELECT * FROM urlopy where email = ?";
             statement = connection.prepareStatement(sql);
-            statement.setString(1,emailE);
+            statement.setString(1,email);
             resultSet =  statement.executeQuery();
 
-            if (resultSet.next()){
+            while (resultSet.next()){
                 int idUrlopy =  resultSet.getInt("idUrlopy");
                 LocalDate start =  resultSet.getDate("start_urlopu").toLocalDate();
                 LocalDate end =  resultSet.getDate("end_urlopu").toLocalDate();
@@ -131,13 +131,11 @@ public class EmployeUtill extends DBEmployee {
                 String name = resultSet.getString("email");
 
                 holiday.add( new Holiday(idUrlopy,start,end,akceptacja,idPracownika, name));
-            }else{
-                throw new Exception("You dont have any planned leaves");
             }
-            return holiday;
+
         }finally {
             close(connection, statement,resultSet);
-        }
+        }return holiday;
 
     }
 
@@ -146,15 +144,17 @@ public class EmployeUtill extends DBEmployee {
         PreparedStatement statement=null;
         try {
             connection = DriverManager.getConnection(URL,email, password);
-            String sql = "Insert into holiday(start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)"+ //todo Pracownicy_id?
+            String sql = "Insert into urlopy (start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)"+ //todo Pracownicy_id?
                     "VALUES(?, ?, ?, ?, ?)";
             statement= connection.prepareStatement(sql);
 
-            statement.setDate(1, Date.valueOf(holiday.getStartUrlopu()));
-            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
+            statement.setString(1, (holiday.getStartUrlopu()).toString());
+            statement.setString(2, (holiday.getKoniecUrlopu().toString()));
+//            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
             statement.setBoolean(3, holiday.isAkceptacja());
             statement.setInt(4,holiday.getPracownikId());
             statement.setString(5, holiday.getEmail());
+            statement.execute();
         }finally {
             close(connection,statement,null);
         }
@@ -287,10 +287,11 @@ public class EmployeUtill extends DBEmployee {
         int staz;
         try{
             connection=DriverManager.getConnection(URL, email, password);
-            String sql = "select staz from pracownicy where email =?";
+            String sql = "select staz from pracownicy where email = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, emailE);
-            if (resultSet.first()){
+            resultSet = statement.executeQuery();
+            if (resultSet.next()){
                 staz = resultSet.getInt("staz");
             } else {
                 throw new Exception("smoething went wrong");
