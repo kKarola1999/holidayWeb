@@ -93,7 +93,7 @@ public class UserrServlet extends HttpServlet {
                     List<Holiday> myLeaves = null;
                     try {
 
-                        myLeaves = dbUtill.getUserHolidays(name);
+                        myLeaves = dbUtill.getUserHolidays();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -124,7 +124,7 @@ public class UserrServlet extends HttpServlet {
         Holiday holiday = new Holiday(id,startUrlopu,koniecUrlopu,akceptacja,idPracownik,email);
 
         // uaktualnienie danych w BD
-        dbUtill.updateHoliday(holiday);
+        dbUtill.updateHoliday(startUrlopu, koniecUrlopu, id, akceptacja);
 
         // wyslanie danych do strony z lista telefonow
         listHoliday(request, response);
@@ -192,7 +192,7 @@ public class UserrServlet extends HttpServlet {
 
     private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<Holiday> holidayList = dbUtill.getUserHolidays(nameUndVorname);
+        List<Holiday> holidayList = dbUtill.getUserHolidays();
 
         // dodanie listy do obiektu zadania
         request.setAttribute("myLeaves", holidayList);
