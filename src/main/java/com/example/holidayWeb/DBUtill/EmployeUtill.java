@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,10 +91,22 @@ public class EmployeUtill extends DBEmployee {
             close(connection,statement,resultSet);
         }
     }
+    public int usedDays(String email){
+        int days =0;
+        try {
+            List<Holiday> holidays =  getUserHolidays(email);
+            for (int i = 0; i<holidays.size();i++ ){
+                days = (int) ChronoUnit.DAYS.between(holidays.get(i).getStartUrlopu(), holidays.get(i).getKoniecUrlopu())+1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return days;
+    }
 
-    public List<Holiday> getUserHolidays (String email) throws Exception{
+    public List<Holiday> getUserHolidays (String emailE) throws Exception{
 
-        List <Holiday> holiday = null;
+        List <Holiday> holiday = new ArrayList<>();
 
         Connection connection =  null;
         PreparedStatement statement = null;
@@ -102,20 +115,20 @@ public class EmployeUtill extends DBEmployee {
         try{
 
 
-            connection = DriverManager.getConnection(URL, this.email, password);
+            connection = DriverManager.getConnection(URL, email, password);
 
-            String sql = "SELECT * FROM urlopy where email =?";
+            String sql = "SELECT * FROM urlopy where email = ?";
             statement = connection.prepareStatement(sql);
-            statement.setString(1,email);
-            resultSet =  statement.executeQuery(sql);
+            statement.setString(1,emailE);
+            resultSet =  statement.executeQuery();
 
             if (resultSet.next()){
                 int idUrlopy =  resultSet.getInt("idUrlopy");
                 LocalDate start =  resultSet.getDate("start_urlopu").toLocalDate();
                 LocalDate end =  resultSet.getDate("end_urlopu").toLocalDate();
                 boolean akceptacja =  resultSet.getBoolean("akceptacja");
-                int idPracownika = resultSet.getInt("Praconicy_id");
-                String name = resultSet.getString("imie_nazwisko");
+                int idPracownika = resultSet.getInt("Pracownicy_id");
+                String name = resultSet.getString("email");
 
                 holiday.add( new Holiday(idUrlopy,start,end,akceptacja,idPracownika, name));
             }else{

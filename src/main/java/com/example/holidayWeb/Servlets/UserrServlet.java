@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @WebServlet(name = "UserrServlet", value = "/UserrServlet")
@@ -50,7 +51,7 @@ public class UserrServlet extends HttpServlet {
                     break;
 
                 case "LOAD":
-                    loadPhone(request, response);
+                    loadHoliday(request, response);
                     break;
 
                 case "UPDATE":
@@ -58,7 +59,7 @@ public class UserrServlet extends HttpServlet {
                     break;
 
                 case "DELETE":
-                    deletePhone(request, response);
+                    deleteHoliday(request, response);
                     break;
 
                 default:
@@ -130,7 +131,7 @@ public class UserrServlet extends HttpServlet {
 
     }
 
-    private void loadPhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void loadHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie id telefonu z formularza
         String id = request.getParameter("holidayID");
@@ -151,24 +152,38 @@ public class UserrServlet extends HttpServlet {
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
         boolean akceptacja =  false;
+        int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
         int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
         String name = nameUndVorname;
 
-        Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
-        dbUtill.addHoliday(holiday);
+        if (limitDni(nameUndVorname,days)){
 
+            Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
+            dbUtill.addHoliday(holiday);
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+        }
+
+    }
+    private boolean limitDni (String email, long days) throws Exception {
+        int usedDays = dbUtill.usedDays(email);
+        boolean flaga = false;
+        if (dbUtill.getStaz(email)>=10 && days+usedDays<=26){ // todo dokonczyć dla wszystkich urlopów
+            flaga =true;
+        }else if(dbUtill.getStaz(email)<10 && days+usedDays<=20){flaga = true;}
+        return flaga;
     }
 
 
-    private void deletePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void deleteHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie danych z formularza
-        String id = request.getParameter("phoneID");
+        String id = request.getParameter("holidayID");
 
         // usuniecie telefonu z BD
         dbUtill.deleteHoliday(id);
 
-        // wyslanie danych do strony z lista telefonow
+        // wyslanie danych do strony
         listHoliday(request, response);
 
     }
