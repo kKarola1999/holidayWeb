@@ -61,9 +61,11 @@
 
                     <button type="button" id="sidebarCollapse" class="btn btn-info">
                         <i class="fas fa-align-left"></i>
-                        <span>Menu</span>
+                        <span>Toggle Sidebar</span>
                     </button>
-
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
 
                 </div>
             </nav>
@@ -71,7 +73,6 @@
   			<div class="agile-tables">
 
   				  <h3>My Leaves</h3>
-            <table class="table table_striped">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -81,17 +82,16 @@
 
                 </tr>
                 </thead>
-<%--                <tbody>--%>
+                <tbody>
 
-                <c:forEach var="tmpHoliday" items="${MYLEAVES}">
+                <c:forEach var="tmpHoliday" items="${myLeaves}">
                     <%-- definiowanie linkow--%>
                     <c:url var="updateLink" value="AdminServlet">
                         <c:param name="command" value="LOAD"></c:param>
                         <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
                     </c:url>
-<%--todo poprawić te linki--%>
-<%--                    zmieniłem n userrra--%>
-                    <c:url var="deleteLink" value="UserrServlet">
+
+                    <c:url var="deleteLink" value="AdminServlet">
                         <c:param name="command" value="DELETE"></c:param>
                         <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
                     </c:url>
@@ -106,7 +106,7 @@
                             <button type="button" class="btn btn-success">Zmień dane</button>
                         </a>
                             <a href="${deleteLink}"
-                               onclick="if(!(confirm('Czy na pewno chcesz usunąć ten urlop?'))) return false">
+                               onclick="if(!(confirm('Czy na pewno chcesz usunąć ten telefon?'))) return false">
                                 <button type="button" class="btn btn-danger">Usuń</button>
                             </a></td>
 
@@ -114,9 +114,9 @@
                     </tr>
 
 
-            </c:forEach>
+                </c:forEach>
                 </tbody>
-            </table>
+
   			</div>
 
 
