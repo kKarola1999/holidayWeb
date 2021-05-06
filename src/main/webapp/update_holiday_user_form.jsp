@@ -2,7 +2,7 @@
   Created by IntelliJ IDEA.
   User: Karolina
   Date: 06.05.2021
-  Time: 10:48
+  Time: 07:51
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -43,12 +43,7 @@
             <li>
                 <a href="index.html">Home</a>
             </li>
-            <li>
 
-            </li>
-            <li>
-                <a href="AddLeave.jsp">Apply Leave</a>
-            </li>
             <li>
                 <a href="myLeaves.jsp">My Leaves</a>
             </li>
@@ -73,46 +68,50 @@
         </nav>
         <div class="grid-form1">
 
-            <h3>Request For Leave</h3>
+            <h3>Change status</h3>
             <div class="tab-content tab-pane active" id="center-form">
 
+                <form class="form-center" >
+
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">From Date  :</label>
+                        <label class="col-sm-4 control-label">Zmień urlop  :</label>
                         <form action="UserrServlet" method="get">
                             <input type="hidden" name="command" value="UPDATE"/>
                             <input type="hidden" name="holidayID" value="${holidayID}"/>
-                        <div class="col-sm-6">
-                            <input type="date" name = "start"  placeholder="From Date" class="form-control1 leave-date" />
-                        </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">From Date  :</label>
+                                <div class="col-sm-6">
+                                    <input type="date" name = "start"  placeholder="From Date" class="form-control1 leave-date" value="${start}" />
+                                </div>
+
+                                <label class="alert-danger col-sm-6 col-sm-offset-4" ></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">To Date :</label>
+                                <div class="col-sm-6">
+                                    <input type="date" name = "end" placeholder="To Date" class="form-control1 leave-date" value="${end}" />
+                                </div>
+
+                                <label class="alert-danger col-sm-6 col-sm-offset-4"> </label>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-8 col-sm-offset-4">
+                            <button type="submit" class="btn btn-success">Zaakceptuj</button>
+                                </div>
+                            </div>
+                        </form>
+
+
+
+
+
 
                         <label class="alert-danger col-sm-6 col-sm-offset-4" ></label>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">To Date :</label>
-                        <div class="col-sm-6">
-                            <input type="date" name = "end" placeholder="To Date" class="form-control1 leave-date" />
-                        </div>
 
-                        <label class="alert-danger col-sm-6 col-sm-offset-4"> </label>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">To Date :</label>
-                        <div class="col-sm-6">
-                            <input type="text" name = "akceptacja" placeholder="akceptacja" class="form-control1 akceptacja" />
-                        </div>
-
-                        <label class="alert-danger col-sm-6 col-sm-offset-4"> </label>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-8 col-sm-offset-4">
-                            <button type="submit" class="btn btn-primary">Zmień dane</button>
-                            <a><button type="button" class="btn btn-default">Cancel</button></a>
-                        </div>
-                    </div>
                 </form>
-                </form>
-
 
             </div>
         </div>
@@ -140,3 +139,4 @@
 </body>
 
 </html>
+

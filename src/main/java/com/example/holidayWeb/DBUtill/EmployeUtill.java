@@ -191,14 +191,14 @@ public class EmployeUtill extends DBEmployee {
             if (resultSet.next()) {
 
 //
-                    LocalDate startUrlopu = resultSet.getDate("start_urlopu").toLocalDate();
-                    LocalDate koniecUrlopu = resultSet.getDate("end_urlopu").toLocalDate();
-                    boolean akceptacja = resultSet.getBoolean("akceptacja");
-                    int pracownikID = resultSet.getInt("Pracownicy_ID");
-                    String email = resultSet.getString("email");
+                LocalDate startUrlopu = resultSet.getDate("start_urlopu").toLocalDate();
+                LocalDate koniecUrlopu = resultSet.getDate("end_urlopu").toLocalDate();
+                boolean akceptacja = resultSet.getBoolean("akceptacja");
+                int pracownikID = resultSet.getInt("Pracownicy_ID");
+                String email = resultSet.getString("email");
 
-                    // utworzenie obiektu
-                    holiday = new Holiday(holidayID, startUrlopu, koniecUrlopu,akceptacja,pracownikID,email);
+                // utworzenie obiektu
+                holiday = new Holiday(holidayID, startUrlopu, koniecUrlopu,akceptacja,pracownikID,email);
 
 
             } else {
@@ -216,7 +216,113 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
-    public void updateHoliday(Holiday holiday) throws Exception {
+
+
+    public LocalDate getEndDate(String id) throws Exception {
+
+        LocalDate endDate= LocalDate.parse("2020-01-01");
+
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            // konwersja id na liczbe
+            int holidayID = Integer.parseInt(id);
+
+            // polaczenie z BD
+            conn = DriverManager.getConnection(URL, email, password);
+
+            // zapytanie SELECT
+            String sql = "SELECT end_urlopu FROM urlopy WHERE idUrlopy =?";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, holidayID);
+
+            // wykonanie zapytania
+            resultSet = statement.executeQuery();
+
+            // przetworzenie wyniku zapytania
+
+            if (resultSet.next()) {
+
+//                int pid = resultSet.getInt("id");
+
+                endDate = resultSet.getDate("end_urlopu").toLocalDate();
+
+
+                // utworzenie obiektu
+
+
+            } else {
+                throw new Exception("Nie można znaleźć id " + holidayID);
+            }
+
+            return endDate;
+
+        } finally {
+
+            // zamkniecie obiektow JDBC
+            close(conn, statement, resultSet);
+
+        }
+
+    }
+
+    public LocalDate getStartDate(String id) throws Exception {
+
+        LocalDate startDate= LocalDate.parse("2020-01-01");
+
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            // konwersja id na liczbe
+            int holidayID = Integer.parseInt(id);
+
+            // polaczenie z BD
+            conn = DriverManager.getConnection(URL, email, password);
+
+            // zapytanie SELECT
+            String sql = "SELECT start_urlopu FROM urlopy WHERE idUrlopy =?";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, holidayID);
+
+            // wykonanie zapytania
+            resultSet = statement.executeQuery();
+
+            // przetworzenie wyniku zapytania
+
+            if (resultSet.next()) {
+
+//                int pid = resultSet.getInt("id");
+
+                startDate = resultSet.getDate("start_urlopu").toLocalDate();
+
+
+                // utworzenie obiektu
+
+
+            } else {
+                throw new Exception("Nie można znaleźć id " + holidayID);
+            }
+
+            return startDate;
+
+        } finally {
+
+            // zamkniecie obiektow JDBC
+            close(conn, statement, resultSet);
+
+        }
+
+    }
+
+    public void updateHoliday(LocalDate start,LocalDate end,int id,boolean akceptacja) throws Exception {
 
         Connection conn = null;
         PreparedStatement statement = null;
@@ -227,14 +333,13 @@ public class EmployeUtill extends DBEmployee {
             conn = DriverManager.getConnection(URL, email, password);
 
             // zapytanie UPDATE
-            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=?,akceptacja=? "+
-                    "WHERE id =?";
+            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=? "+
+                    "WHERE idUrlopy =?";
 
             statement = conn.prepareStatement(sql);
-            statement.setDate(1, Date.valueOf(holiday.getStartUrlopu()));
-            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
-            statement.setBoolean(3, holiday.isAkceptacja());
-            statement.setInt(4,holiday.getId());
+            statement.setDate(1, Date.valueOf(start));
+            statement.setDate(2, Date.valueOf(end));
+            statement.setInt(3,id);
 
 
             // wykonanie zapytania

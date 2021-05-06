@@ -89,16 +89,16 @@ public class UserrServlet extends HttpServlet {
         if (validate(name, password)) {
             try {
 //                if (password.equals(dbUtill.getPassword(name))) {
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
-                    List<Holiday> myLeaves = null;
-                    try {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
+                List<Holiday> myLeaves = null;
+                try {
 
-                        myLeaves = dbUtill.getUserHolidays(name);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    request.setAttribute("myLeaves", myLeaves);
-                    dispatcher.forward(request, response);
+                    myLeaves = dbUtill.getUserHolidays(name);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                request.setAttribute("myLeaves", myLeaves);
+                dispatcher.forward(request, response);
 //                } else {
 //                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
 //                }
@@ -116,15 +116,11 @@ public class UserrServlet extends HttpServlet {
         LocalDate startUrlopu = LocalDate.parse(request.getParameter("start"));
         LocalDate koniecUrlopu = LocalDate.parse(request.getParameter("end"));
         boolean akceptacja= Boolean.parseBoolean(request.getParameter("akceptacja"));
-        int idPracownik= Integer.parseInt(request.getParameter("idPracownikaInput"));
-        String email=request.getParameter("emailInput");
 
 
-        // utworzenie nowego telefonu
-        Holiday holiday = new Holiday(id,startUrlopu,koniecUrlopu,akceptacja,idPracownik,email);
 
         // uaktualnienie danych w BD
-        dbUtill.updateHoliday(holiday);
+        dbUtill.updateHoliday(startUrlopu,koniecUrlopu,id,akceptacja);
 
         // wyslanie danych do strony z lista telefonow
         listHoliday(request, response);
@@ -136,14 +132,23 @@ public class UserrServlet extends HttpServlet {
         // odczytanie id telefonu z formularza
         String id = request.getParameter("holidayID");
 
-        // pobranie  danych telefonu z BD
-        Holiday holiday = dbUtill.getHoliday(id);
+
+
+
+
+        LocalDate startDate = dbUtill.getStartDate(id);
+        LocalDate endDate = dbUtill.getEndDate(id);
+
+
+
 
         // przekazanie telefonu do obiektu request
-        request.setAttribute("HOLIDAY", holiday);
+        request.setAttribute("holidayID", id);
+        request.setAttribute("end", endDate);
+        request.setAttribute("start", startDate);
 
         // wyslanie danych do formmularza JSP (update_phone_form)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday2_form.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday_user_form.jsp");
         dispatcher.forward(request, response);
 
     }
