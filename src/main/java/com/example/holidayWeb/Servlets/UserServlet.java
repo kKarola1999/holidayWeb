@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @WebServlet(name = "UserServlet", value="/userServlet")
@@ -81,36 +82,37 @@ public class UserServlet extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws
-        ServletException, IOException{
-            response.setContentType("text/html");
+        ServletException, IOException {
+        response.setContentType("text/html");
 
-            String name = request.getParameter("inputEmail");
-            String password =  request.getParameter("inputPassword");
+        String name = request.getParameter("inputEmail");
+        String password = request.getParameter("inputPassword");
 
-            nameUndVorname = name;
-            emploPass =password;
+        nameUndVorname = name;
+        emploPass = password;
 
-            dbUtill.setEmail(name);
-            dbUtill.setPassword(password);
+        dbUtill.setEmail(name);
+        dbUtill.setPassword(password);
 
-//            if (validate(name, password)){
-        try {
-            if (password.equals(dbUtill.getPassword(name))){
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
-            List<Holiday> myLeaves = null;
-            try{
+        if (validate(name, password)) {
+            try {
+                if (password.equals(dbUtill.getPassword(name))) {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
+                    List<Holiday> myLeaves = null;
+                    try {
 
-                myLeaves = dbUtill.getUserHolidays(name);
+                        myLeaves = dbUtill.getUserHolidays(name);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    request.setAttribute("myLeaves", myLeaves);
+                    dispatcher.forward(request, response);
+                } else {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            request.setAttribute("myLeaves", myLeaves);
-            dispatcher.forward(request,response);
-        }else{
-            RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
-        }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -156,14 +158,19 @@ public class UserServlet extends HttpServlet {
     private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
+        long days = ChronoUnit.DAYS.between(start, end) + 1;
         boolean akceptacja =  false;
         int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
-        String name = nameUndVorname;
-
-        Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
-        dbUtill.addHoliday(holiday);
-
+//        String name = nameUndVorname;
+        if (limitDni(nameUndVorname, days)) {
+            Holiday holiday = new Holiday(start, end, akceptacja, idEmploy, nameUndVorname);
+            dbUtill.addHoliday(holiday);
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+        }
     }
+
+
 
 
     private void deletePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -193,7 +200,13 @@ public class UserServlet extends HttpServlet {
 
         // przekazanie do JSP
         dispatcher.forward(request, response);
-
+    }
+    private boolean limitDni (String email, long days) throws Exception {
+        boolean flaga = false;
+        if (dbUtill.getStaz(email)>=10 && days<=26){ // todo dokonczyć dla wszystkich urlopów
+            flaga =true;
+        }else if(dbUtill.getStaz(email)<10 && days<=20){flaga = true;}
+        return flaga;
     }
 
     private  boolean validate (String email, String password){

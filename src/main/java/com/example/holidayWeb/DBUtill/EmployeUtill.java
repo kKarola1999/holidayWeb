@@ -267,6 +267,26 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    public int getStaz(String emailE)throws Exception{
+        Connection connection =null;
+        PreparedStatement statement =null;
+        ResultSet resultSet =null;
+        int staz;
+        try{
+            connection=DriverManager.getConnection(URL, email, password);
+            String sql = "select staz from pracownicy where email =?";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, emailE);
+            if (resultSet.first()){
+                staz = resultSet.getInt("staz");
+            } else {
+                throw new Exception("smoething went wrong");
+            }
+            return staz;
+        }finally {
+            close(connection,statement,resultSet);
+        }
+    }
 
     public void setEmail(String email){this.email = email;}
     public void setPassword(String password){this.password = password;}

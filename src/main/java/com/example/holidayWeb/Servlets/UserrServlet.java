@@ -77,34 +77,36 @@ public class UserrServlet extends HttpServlet {
         response.setContentType("text/html");
 
         String name = request.getParameter("inputEmail");
-        String password =  request.getParameter("inputPassword");
+        String password = request.getParameter("inputPassword");
 
         nameUndVorname = name;
-        emploPass =password;
+        emploPass = password;
 
         dbUtill.setEmail(name);
         dbUtill.setPassword(password);
 
-//            if (validate(name, password)){
-        try {
-            if (password.equals(dbUtill.getPassword(name))){
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
-                List<Holiday> myLeaves = null;
-                try{
+        if (validate(name, password)) {
+            try {
+//                if (password.equals(dbUtill.getPassword(name))) {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
+                    List<Holiday> myLeaves = null;
+                    try {
 
-                    myLeaves = dbUtill.getUserHolidays(name);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                request.setAttribute("myLeaves", myLeaves);
-                dispatcher.forward(request,response);
-            }else{
-                RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
+                        myLeaves = dbUtill.getUserHolidays(name);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    request.setAttribute("myLeaves", myLeaves);
+                    dispatcher.forward(request, response);
+//                } else {
+//                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
+//                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
+
 
     private void updatePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
