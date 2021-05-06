@@ -33,7 +33,7 @@
 
             <ul class="list-unstyled components">
                 <li>
-                    <a href="index.html">Home</a>
+                    <a href="index.html">Logout</a>
                 </li>
 
                 <li>

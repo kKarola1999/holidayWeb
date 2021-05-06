@@ -166,7 +166,7 @@ public class UserrServlet extends HttpServlet {
         int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
         String name = nameUndVorname;
 
-        if (limitDni(nameUndVorname,days)){
+        if (limitDni(nameUndVorname,days) && start.isBefore(end)){
 
             Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
             dbUtill.addHoliday(holiday);

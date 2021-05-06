@@ -368,7 +368,8 @@ public class EmployeUtill extends DBEmployee {
             conn = DriverManager.getConnection(URL, email, password);
 
             // zapytanie DELETE
-            String sql = "DELETE FROM urlopy WHERE idUrlopy =?";
+//            String sql = "DELETE FROM urlopy WHERE idUrlopy =?";
+            String sql=  "UPDATE urlopy SET to_delete = 1 where idUrlopy = ?";
 
             statement = conn.prepareStatement(sql);
             statement.setInt(1, holidayID);

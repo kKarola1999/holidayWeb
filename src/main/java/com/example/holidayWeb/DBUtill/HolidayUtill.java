@@ -98,6 +98,35 @@ public class HolidayUtill extends DBUtil {
 
     }
 
+    public List <Holiday> getHolidayToDelete () throws  Exception{
+        List <Holiday> toDelete =  new ArrayList<>();
+        Connection connection = null;
+        Statement statement= null;
+        ResultSet resultSet= null;
+
+        try{
+            connection =  DriverManager.getConnection(URL,name,password);
+            String sql =  "Select * From urlopy where to_delete = 1";
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()){
+                int id = resultSet.getInt("idUrlopy");
+                LocalDate start_urlopu = resultSet.getDate("start_urlopu").toLocalDate();
+                LocalDate end_urlopu = resultSet.getDate("end_urlopu").toLocalDate();
+                boolean akceptacja = resultSet.getBoolean("akceptacja");
+                int idPracownika = resultSet.getInt("Pracownicy_id");
+                String email = resultSet.getString("email");
+
+                toDelete.add(new Holiday(id,start_urlopu,end_urlopu,akceptacja,idPracownika,email));
+            }
+
+        }finally {
+            close(connection,statement,resultSet);
+        }
+        return toDelete;
+    }
+
     public Boolean getStatus(String id) throws Exception {
 
         boolean akceptacja = false;
@@ -183,6 +212,27 @@ public class HolidayUtill extends DBUtil {
         }
 
     }
+    public void adminDeleteHoliday (String id) throws Exception{
+        Connection  connection = null;
+        PreparedStatement statement = null;
+
+        try{
+            int idUrlopy =  Integer.parseInt(id);
+
+            connection = DriverManager.getConnection(URL, name, password);
+
+            String sql = ("DELETE FROM urlopy WHERE idUrlopy = ?");
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, idUrlopy);
+
+            statement.execute();
+
+        }   finally {
+            close(connection,statement,null);
+        }
+
+    }
+
 
 
 

@@ -47,20 +47,26 @@ public class AdminServlet extends HttpServlet {
 
                 case "LIST":
                     listHoliday(request, response);
+                    listHolidayToDelete(request,response);
                     break;
 
 
                 case "LOAD":
                     loadHoliday(request, response);
+                    listHolidayToDelete(request,response);
                     break;
 
                 case "UPDATE":
                     updateHoliday(request, response);
+//                    listHolidayToDelete(request,response);
                     break;
-
+                case "DELETE":
+                    deleteHoliday(request, response);
+                    break;
 
                 default:
                     listHoliday(request, response);
+                    listHolidayToDelete(request,response);
             }
 
         } catch (Exception e) {
@@ -82,24 +88,26 @@ public class AdminServlet extends HttpServlet {
 
         if (validate(email, password)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/adminLeaves.jsp");
+//            RequestDispatcher dispatcher2 = request.getRequestDispatcher("/toDeleteLeaves.jsp");
 
             List<Holiday> holidayList = null;
-
+            List<Holiday> toDelete = null;
             try {
 
                 holidayList = dbUtil.getHolidays();
-
+                toDelete = dbUtil.getHolidayToDelete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // dodanie listy do obiektu zadania
             request.setAttribute("HOLIDAYS_LIST", holidayList);
-
+            request.setAttribute("HOlIDAYS_DELETE", toDelete );
             dispatcher.forward(request, response);
+//            dispatcher2.forward(request,response);
         } else {
 
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.html");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/loginAdmin.html");
             dispatcher.include(request, response);
         }
 
@@ -111,12 +119,6 @@ public class AdminServlet extends HttpServlet {
         // odczytanie danych z formularza
         int id=Integer.parseInt(request.getParameter("holidayID"));
         boolean akceptacja= Boolean.parseBoolean(request.getParameter("akceptacja"));
-
-
-
-
-        // utworzenie nowego telefonu
-
 
         // uaktualnienie danych w BD
         dbUtil.updateHoliday(akceptacja,id);
@@ -159,6 +161,28 @@ public class AdminServlet extends HttpServlet {
         dispatcher.forward(request, response);
 
     }
+
+    private  void listHolidayToDelete (HttpServletRequest request, HttpServletResponse response) throws  Exception{
+        List<Holiday> holidayList = dbUtil.getHolidayToDelete();
+        request.setAttribute("HOlIDAYS_DELETE", holidayList);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/adminLeaves.jsp");
+        dispatcher.forward(request, response);
+//        deleteHoliday(request,response);
+    }
+
+    private void deleteHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // odczytanie danych z formularza
+        String id = request.getParameter("holidayID");
+
+        // usuniecie telefonu z BD
+        dbUtil.adminDeleteHoliday(id);
+
+        // wyslanie danych do strony
+        listHoliday(request, response);
+
+    }
+
     private boolean validate(String name, String pass) {
         boolean status = false;
 

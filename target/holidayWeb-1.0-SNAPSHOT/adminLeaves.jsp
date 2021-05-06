@@ -38,7 +38,7 @@
 
             <ul class="list-unstyled components">
                 <li>
-                    <a href="index.html">Home</a>
+                    <a href="index.html">Logout</a>
                 </li>
                 <li>
                     <a href="adminLeaves.jsp">Leaves</a>
@@ -65,7 +65,7 @@
 
             <div class="agile-tables">
 
-                <h3>My Leaves</h3>
+                <h3>Emplyees leaves requests</h3>
                 <table class="table table-striped">
                 <thead>
                 <tr>
@@ -80,6 +80,7 @@
                 </thead>
                 <tbody>
 
+<%--                <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">--%>
                 <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">
                     <%-- definiowanie linkow--%>
                     <c:url var="updateLink" value="AdminServlet">
@@ -87,10 +88,10 @@
                         <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
                     </c:url>
 
-                    <c:url var="deleteLink" value="AdminServlet">
-                        <c:param name="command" value="DELETE"></c:param>
-                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
-                    </c:url>
+<%--                    <c:url var="deleteLink" value="AdminServlet">--%>
+<%--                        <c:param name="command" value="DELETE"></c:param>--%>
+<%--                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>--%>
+<%--                    </c:url>--%>
 
 
                     <tr>
@@ -111,7 +112,54 @@
                 </c:forEach>
                 </tbody>
                 </table>
+</br>
+                <h3>Delete Requests</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Data początkowa</th>
+                        <th scope="col">Data końcowa</th>
+                        <th scope="col">Akceptacja</th>
+                        <th scope="col">PracownikId</th>
+                        <th scope="col">Email</th>
 
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <%--                <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">--%>
+                    <c:forEach var="tmpHoliday" items="${HOlIDAYS_DELETE}">
+                        <%-- definiowanie linkow--%>
+<%--                        <c:url var="updateLink" value="AdminServlet">--%>
+<%--                            <c:param name="command" value="LOAD"></c:param>--%>
+<%--                            <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>--%>
+<%--                        </c:url>--%>
+
+                        <c:url var="deleteLink" value="AdminServlet">
+                            <c:param name="command" value="DELETE"></c:param>
+                            <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
+                        </c:url>
+
+
+                        <tr>
+                            <th scope="row">${tmpHoliday.id}</th>
+                            <td>${tmpHoliday.startUrlopu}</td>
+                            <td>${tmpHoliday.koniecUrlopu}</td>
+                            <td>${tmpHoliday.akceptacja}</td>
+                            <td>${tmpHoliday.pracownikId}</td>
+                            <td>${tmpHoliday.email}</td>
+                            <td><a href="${deleteLink}">
+                                <button type="button" class="btn btn-success">Usuń</button>
+                            </a>
+
+
+                        </tr>
+
+
+                    </c:forEach>
+                    </tbody>
+                </table>
             </div>
 
 
