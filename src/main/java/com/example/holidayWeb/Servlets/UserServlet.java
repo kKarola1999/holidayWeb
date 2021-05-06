@@ -14,11 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet("/userServlet")
+@WebServlet(name = "UserServlet", value="/userServlet")
 public class UserServlet extends HttpServlet {
     private EmployeUtill dbUtill;
     private final String db_url = "jdbc:mysql://localhost:3306/holiday";
@@ -34,6 +35,50 @@ public class UserServlet extends HttpServlet {
             throw new SecurityException(e);
         }
     }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
+            ServletException, IOException {
+
+
+        try {
+
+            // odczytanie zadania
+            String command = request.getParameter("command");
+
+            if (command == null)
+                command = "LIST";
+
+            switch (command) {
+
+                case "LIST":
+                    listHoliday(request, response);
+                    break;
+
+                case "ADD":
+                    addHoliday(request, response);
+                    break;
+
+                case "LOAD":
+                    loadPhone(request, response);
+                    break;
+
+                case "UPDATE":
+                    updatePhone(request, response);
+                    break;
+
+                case "DELETE":
+                    deletePhone(request, response);
+                    break;
+
+                default:
+                    listHoliday(request, response);
+            }
+
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+
+    }
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws
         ServletException, IOException{
@@ -69,6 +114,45 @@ public class UserServlet extends HttpServlet {
         }
     }
 
+    private void updatePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // odczytanie danych z formularza
+        int id = Integer.parseInt(request.getParameter("holidayID"));
+        LocalDate startUrlopu = LocalDate.parse(request.getParameter("startUrlopuInput"));
+        LocalDate koniecUrlopu = LocalDate.parse(request.getParameter("koniecUrlopuInput"));
+        boolean akceptacja= Boolean.parseBoolean(request.getParameter("akceptacjaInput"));
+        int idPracownik= Integer.parseInt(request.getParameter("idPracownikaInput"));
+        String email=request.getParameter("emailInput");
+
+
+        // utworzenie nowego telefonu
+        Holiday holiday = new Holiday(id,startUrlopu,koniecUrlopu,akceptacja,idPracownik,email);
+
+        // uaktualnienie danych w BD
+        dbUtill.updateHoliday(holiday);
+
+        // wyslanie danych do strony z lista telefonow
+        listHoliday(request, response);
+
+    }
+
+    private void loadPhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // odczytanie id telefonu z formularza
+        String id = request.getParameter("holidayID");
+
+        // pobranie  danych telefonu z BD
+        Holiday holiday = dbUtill.getHoliday(id);
+
+        // przekazanie telefonu do obiektu request
+        request.setAttribute("HOLIDAY", holiday);
+
+        // wyslanie danych do formmularza JSP (update_phone_form)
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday2_form.jsp");
+        dispatcher.forward(request, response);
+
+    }
+
     private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
@@ -78,6 +162,37 @@ public class UserServlet extends HttpServlet {
 
         Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
         dbUtill.addHoliday(holiday);
+
+    }
+
+
+    private void deletePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // odczytanie danych z formularza
+        String id = request.getParameter("phoneID");
+
+        // usuniecie telefonu z BD
+        dbUtill.deleteHoliday(id);
+
+        // wyslanie danych do strony z lista telefonow
+        listHoliday(request, response);
+
+    }
+
+
+
+    private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        List<Holiday> holidayList = dbUtill.getUserHolidays(nameUndVorname);
+
+        // dodanie listy do obiektu zadania
+        request.setAttribute("HOLIDAYS_LIST", holidayList);
+
+        // dodanie request dispatcher
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
+
+        // przekazanie do JSP
+        dispatcher.forward(request, response);
 
     }
 
@@ -98,5 +213,8 @@ public class UserServlet extends HttpServlet {
             throwables.printStackTrace();
         }return status;
     }
+
+
+
 
 }

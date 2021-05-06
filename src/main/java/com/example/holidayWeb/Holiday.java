@@ -20,7 +20,7 @@ public class Holiday {
         this.email = email;
     }
 
-    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String email) {
+    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
         this.startUrlopu = startUrlopu;
         this.koniecUrlopu = koniecUrlopu;
         this.akceptacja = akceptacja;
@@ -36,7 +36,7 @@ public class Holiday {
                 ", koniecUrlopu=" + koniecUrlopu +
                 ", akceptacja=" + akceptacja +
                 ", pracownikId=" + pracownikId +
-                ", email='" + email + '\'' +
+                ", imie_nazwisko='" + email + '\'' +
                 '}';
     }
 
@@ -68,8 +68,9 @@ public class Holiday {
         return akceptacja;
     }
 
-    public void setAkceptacja(boolean akceptacja) {
+    public boolean setAkceptacja(boolean akceptacja) {
         this.akceptacja = akceptacja;
+        return akceptacja;
     }
 
     public int getPracownikId() {
@@ -84,7 +85,7 @@ public class Holiday {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String imie_nazwisko) {
+        this.email = imie_nazwisko;
     }
 }

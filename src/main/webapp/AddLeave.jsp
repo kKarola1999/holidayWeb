@@ -39,7 +39,7 @@
 
                 </li>
                 <li>
-                    <a href="AddLeave.html">Apply Leave</a>
+                    <a href="AddLeave.jsp">Apply Leave</a>
                 </li>
                 <li>
                     <a href="myLeaves.jsp">My Leaves</a>
@@ -69,8 +69,9 @@
 
                         <h3>Request For Leave</h3>
                         <div class="tab-content tab-pane active" id="center-form">
+                            <form action="AdminServlet" method="get">
+                                <input type="hidden" name="command" value="ADD">
 
-                            <form class="form-center" >
 
             					<div class="form-group">
             						<label class="col-sm-4 control-label">From Date  :</label>
@@ -88,32 +89,14 @@
 
             						<label class="alert-danger col-sm-6 col-sm-offset-4"> </label>
             					</div>
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">Leave Type :</label>
-            						<div class="col-sm-6">
-            							<select  class="form-control1">
-            								<option value="">Select</option>
-            								<option value="CASUAL LEAVE">CASUAL LEAVE</option>
-            								<option value="SICK LEAVE">SICK LEAVE</option>
-            							</select>
-            						</div>
 
-            						<label class="alert-danger col-sm-6 col-sm-offset-4" ></label>
-            					</div>
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">Leave Reason :</label>
-            						<div class="col-sm-6">
-            							<textarea  placeholder="Leave Reason" class="form-control1" style="height: 100px;"></textarea>
-            						</div>
-
-            						<label class="alert-danger col-sm-6 col-sm-offset-4"  ></label>
-            					</div>
             					<div class="row">
             						<div class="col-sm-8 col-sm-offset-4">
             							<button type="submit" class="btn btn-primary">Apply Leave</button>
             							<a><button type="button" class="btn btn-default">Cancel</button></a>
             						</div>
             					</div>
+
                             </form>
 
                         </div>

@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"
+         import="java.util.*" %>
+
 <html>
 
 <head>
@@ -40,7 +43,7 @@
 
                 </li>
                 <li>
-                    <a href="AddLeave.html">Apply Leave</a>
+                    <a href="AddLeave.jsp">Apply Leave</a>
                 </li>
                 <li>
                     <a href="myLeaves.jsp">My Leaves</a>
@@ -81,7 +84,17 @@
                 </thead>
                 <tbody>
 
-                <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">
+                <c:forEach var="tmpHoliday" items="${myLeaves}">
+                    <%-- definiowanie linkow--%>
+                    <c:url var="updateLink" value="AdminServlet">
+                        <c:param name="command" value="LOAD"></c:param>
+                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
+                    </c:url>
+
+                    <c:url var="deleteLink" value="AdminServlet">
+                        <c:param name="command" value="DELETE"></c:param>
+                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
+                    </c:url>
 
 
                     <tr>
@@ -89,6 +102,14 @@
                         <td>${tmpHoliday.startUrlopu}</td>
                         <td>${tmpHoliday.koniecUrlopu}</td>
                         <td>${tmpHoliday.akceptacja}</td>
+                        <td><a href="${updateLink}">
+                            <button type="button" class="btn btn-success">Zmień dane</button>
+                        </a>
+                            <a href="${deleteLink}"
+                               onclick="if(!(confirm('Czy na pewno chcesz usunąć ten telefon?'))) return false">
+                                <button type="button" class="btn btn-danger">Usuń</button>
+                            </a></td>
+
 
                     </tr>
 

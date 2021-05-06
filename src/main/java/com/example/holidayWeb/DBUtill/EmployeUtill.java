@@ -15,7 +15,7 @@ public class EmployeUtill extends DBEmployee {
     private String URL;
     private String email;
     private String password;
-    public EmployeUtill (String URL){this.dataSource = dataSource; }
+    public EmployeUtill (String URL){this.URL = URL; }
 
 
     @Override
@@ -26,7 +26,7 @@ public class EmployeUtill extends DBEmployee {
         ResultSet resultSet = null;
 
         try {
-            connection = dataSource.getConnection();
+            connection = DriverManager.getConnection(URL,email,password);
             String sql =  "SELECT * FROM pracownicy";
             statement =  connection.createStatement();
             resultSet =  statement.executeQuery(sql);
@@ -93,7 +93,7 @@ public class EmployeUtill extends DBEmployee {
 
     public List<Holiday> getUserHolidays (String email) throws Exception{
 
-       List <Holiday> holiday = null;
+        List <Holiday> holiday = null;
 
         Connection connection =  null;
         PreparedStatement statement = null;
@@ -134,7 +134,7 @@ public class EmployeUtill extends DBEmployee {
         try {
             connection = DriverManager.getConnection(URL,email, password);
             String sql = "Insert into holiday(start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)"+ //todo Pracownicy_id?
-                "VALUES(?, ?, ?, ?, ?)";
+                    "VALUES(?, ?, ?, ?, ?)";
             statement= connection.prepareStatement(sql);
 
             statement.setDate(1, Date.valueOf(holiday.getStartUrlopu()));
@@ -145,6 +145,126 @@ public class EmployeUtill extends DBEmployee {
         }finally {
             close(connection,statement,null);
         }
+    }
+
+    public Holiday getHoliday(String id) throws Exception {
+        Connection conn =null;
+        PreparedStatement statement=null;
+        ResultSet resultSet = null;
+
+        Holiday holiday= null;
+
+
+
+        try {
+
+            // konwersja id na liczbe
+            int holidayID = Integer.parseInt(id);
+
+            // polaczenie z BD
+            conn = DriverManager.getConnection(URL, email, password);
+
+            // zapytanie SELECT
+            String sql = "SELECT * FROM urlopy WHERE idUrlopy =?";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, holidayID);
+
+            // wykonanie zapytania
+            resultSet = statement.executeQuery();
+
+            // przetworzenie wyniku zapytania
+
+            if (resultSet.next()) {
+
+//
+                    LocalDate startUrlopu = resultSet.getDate("start_urlopu").toLocalDate();
+                    LocalDate koniecUrlopu = resultSet.getDate("end_urlopu").toLocalDate();
+                    boolean akceptacja = resultSet.getBoolean("akceptacja");
+                    int pracownikID = resultSet.getInt("Pracownicy_ID");
+                    String email = resultSet.getString("email");
+
+                    // utworzenie obiektu
+                    holiday = new Holiday(holidayID, startUrlopu, koniecUrlopu,akceptacja,pracownikID,email);
+
+
+            } else {
+                throw new Exception("Nie można znaleźć id " + holidayID);
+            }
+
+            return holiday;
+
+        } finally {
+
+            // zamkniecie obiektow JDBC
+            close(conn, statement, resultSet);
+
+        }
+
+    }
+
+    public void updateHoliday(Holiday holiday) throws Exception {
+
+        Connection conn = null;
+        PreparedStatement statement = null;
+
+        try {
+
+            // polaczenie z BD
+            conn = DriverManager.getConnection(URL, email, password);
+
+            // zapytanie UPDATE
+            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=?,akceptacja=? "+
+                    "WHERE id =?";
+
+            statement = conn.prepareStatement(sql);
+            statement.setDate(1, Date.valueOf(holiday.getStartUrlopu()));
+            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
+            statement.setBoolean(3, holiday.isAkceptacja());
+            statement.setInt(4,holiday.getId());
+
+
+            // wykonanie zapytania
+            statement.execute();
+
+        } finally {
+
+            // zamkniecie obiektow JDBC
+            close(conn, statement, null);
+
+        }
+
+    }
+
+    public void deleteHoliday(String id) throws Exception {
+
+        Connection conn = null;
+        PreparedStatement statement = null;
+
+        try {
+
+            // konwersja id na liczbe
+            int holidayID = Integer.parseInt(id);
+
+            // polaczenie z BD
+            conn = DriverManager.getConnection(URL, email, password);
+
+            // zapytanie DELETE
+            String sql = "DELETE FROM urlopy WHERE idUrlopy =?";
+
+            statement = conn.prepareStatement(sql);
+            statement.setInt(1, holidayID);
+
+            // wykonanie zapytania
+            statement.execute();
+
+        } finally {
+
+            // zamkniecie obiektow JDBC
+            close(conn, statement, null);
+
+        }
+
     }
 
 

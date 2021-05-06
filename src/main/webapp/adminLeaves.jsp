@@ -1,7 +1,11 @@
-<!DOCTYPE html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"
+         import="java.util.*" %>
 <html>
 
 <head>
+
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,6 +18,7 @@
 
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/table-style.css">
 
 
 
@@ -36,13 +41,7 @@
                     <a href="index.html">Home</a>
                 </li>
                 <li>
-
-                </li>
-                <li>
-                    <a href="AddLeave.html">Apply Leave</a>
-                </li>
-                <li>
-                    <a href="myLeaves.jsp">My Leaves</a>
+                    <a href="adminLeaves.jsp">Leaves</a>
                 </li>
             </ul>
 
@@ -65,65 +64,61 @@
 
                 </div>
             </nav>
-            <div class="grid-form1">
-
-                        <h3>Request For Leave</h3>
-                        <div class="tab-content tab-pane active" id="center-form">
-
-                            <form class="form-center" >
-
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">From Date  :</label>
-            						<div class="col-sm-6">
-            							<input type="text"  placeholder="From Date" class="form-control1 leave-date" />
-            						</div>
-
-            						<label class="alert-danger col-sm-6 col-sm-offset-4" ></label>
-            					</div>
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">To Date :</label>
-            						<div class="col-sm-6">
-            							<input type="text"  placeholder="To Date" class="form-control1 leave-date" />
-            						</div>
-
-            						<label class="alert-danger col-sm-6 col-sm-offset-4" </label>
-            					</div>
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">Leave Type :</label>
-            						<div class="col-sm-6">
-            							<select  class="form-control1">
-            								<option value="">Select</option>
-            								<option value="CASUAL LEAVE">CASUAL LEAVE</option>
-            								<option value="SICK LEAVE">SICK LEAVE</option>
-            							</select>
-            						</div>
-
-            						<label class="alert-danger col-sm-6 col-sm-offset-4" ></label>
-            					</div>
-            					<div class="form-group">
-            						<label class="col-sm-4 control-label">Leave Reason :</label>
-            						<div class="col-sm-6">
-            							<textarea  placeholder="Leave Reason" class="form-control1" style="height: 100px;"></textarea>
-            						</div>
-
-            						<label class="alert-danger col-sm-6 col-sm-offset-4"  ></label>
-            					</div>
-            					<div class="row">
-            						<div class="col-sm-8 col-sm-offset-4">
-            							<button type="submit" class="btn btn-primary">Apply Leave</button>
-            							<a><button type="button" class="btn btn-default">Cancel</button></a>
-            						</div>
-            					</div>
-                            </form>
-
-                        </div>
-                     </div>
 
 
+
+                <h3>My Leaves</h3>
+                <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Data początkowa</th>
+                    <th scope="col">Data końcowa</th>
+                    <th scope="col">Akceptacja</th>
+                    <th scope="col">PracownikId</th>
+                    <th scope="col">Email</th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                <c:forEach var="tmpHoliday" items="${HOLIDAYS_LIST}">
+                    <%-- definiowanie linkow--%>
+                    <c:url var="updateLink" value="AdminServlet">
+                        <c:param name="command" value="LOAD"></c:param>
+                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
+                    </c:url>
+
+                    <c:url var="deleteLink" value="AdminServlet">
+                        <c:param name="command" value="DELETE"></c:param>
+                        <c:param name="holidayID" value="${tmpHoliday.id}"></c:param>
+                    </c:url>
+
+
+                    <tr>
+                        <th scope="row">${tmpHoliday.id}</th>
+                        <td>${tmpHoliday.startUrlopu}</td>
+                        <td>${tmpHoliday.koniecUrlopu}</td>
+                        <td>${tmpHoliday.akceptacja}</td>
+                        <td>${tmpHoliday.pracownikId}</td>
+                        <td>${tmpHoliday.email}</td>
+                        <td><a href="${updateLink}">
+                            <button type="button" class="btn btn-success">Zmień dane</button>
+                        </a>
+
+
+                    </tr>
+
+
+                </c:forEach>
+                </tbody>
+                </table>
+
+            </div>
 
 
         </div>
-    </div>
+
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
