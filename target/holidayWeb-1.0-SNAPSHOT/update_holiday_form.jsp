@@ -80,6 +80,7 @@
                         <form action="AdminServlet" method="get">
                             <input type="hidden" name="command" value="UPDATE"/>
                             <input type="hidden" name="holidayID" value="${holidayID}"/>
+
                             <div class="col-sm-6">
                                 <input type="text" name = "holiday"  placeholder="From Date" class="form-control1 leave-date" value="${holidayID}" />
 

@@ -35,9 +35,7 @@
                 <li>
                     <a href="index.html">Home</a>
                 </li>
-                <li>
 
-                </li>
                 <li>
                     <a href="AddLeave.jsp">Apply Leave</a>
                 </li>
@@ -57,11 +55,9 @@
 
                     <button type="button" id="sidebarCollapse" class="btn btn-info">
                         <i class="fas fa-align-left"></i>
-                        <span>Toggle Sidebar</span>
+                        <span>Menu</span>
                     </button>
-                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="fas fa-align-justify"></i>
-                    </button>
+
 
                 </div>
             </nav>

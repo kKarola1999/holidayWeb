@@ -60,11 +60,9 @@
 
                 <button type="button" id="sidebarCollapse" class="btn btn-info">
                     <i class="fas fa-align-left"></i>
-                    <span>Toggle Sidebar</span>
+                    <span>Menu</span>
                 </button>
-                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-align-justify"></i>
-                </button>
+
 
             </div>
         </nav>
@@ -81,15 +79,16 @@
                             <input type="hidden" name="command" value="UPDATE"/>
                             <input type="hidden" name="holidayID" value="${holidayID}"/>
 
-                            <div class="col-sm-6">
-                                <input type="text" name = "holiday"  placeholder="From Date" class="form-control1 leave-date" value="${holidayID}" />
 
-                            </div>
                             <div class="col-sm-6">
                                 <input type="text" name = "akceptacja"  placeholder="From Date" class="form-control1 leave-date" value="${Status}" />
 
                             </div>
-                            <button type="submit" class="btn btn-success">Zmień dane</button>
+                            <div class="row">
+                                <div class="col-sm-8 col-sm-offset-4">
+                            <button type="submit" class="btn btn-success">Zaakceptuj</button>
+                                </div>
+                            </div>
                         </form>
 
 
