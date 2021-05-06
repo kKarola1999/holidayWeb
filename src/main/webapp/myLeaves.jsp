@@ -71,6 +71,7 @@
   			<div class="agile-tables">
 
   				  <h3>My Leaves</h3>
+             <table class="table table_striped"   >
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -114,7 +115,7 @@
 
                 </c:forEach>
                 </tbody>
-
+            </table>
   			</div>
 
 
