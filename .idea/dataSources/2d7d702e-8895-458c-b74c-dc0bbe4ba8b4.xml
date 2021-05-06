@@ -930,7 +930,8 @@ SELECT|choco_db.choco
     </user>
     <user id="294" parent="1" name="karoli@wp.pl">
       <Host>localhost</Host>
-      <ObjectGrants>SELECT|holiday.pracownicy
+      <ObjectGrants>INSERT,UPDATE
+SELECT|holiday.pracownicy
 SELECT|holiday.urlopy
 </ObjectGrants>
     </user>

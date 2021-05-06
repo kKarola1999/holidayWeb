@@ -65,7 +65,8 @@
 
                         <h3>Request For Leave</h3>
                         <div class="tab-content tab-pane active" id="center-form">
-                            <form action="AdminServlet" method="get">
+                            <form action="UserrServlet" method="get">
+<%--                                // AdminServlet--%>
                                 <input type="hidden" name="command" value="ADD">
 
 

@@ -20,7 +20,7 @@ public class Holiday {
         this.email = email;
     }
 
-    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String imie_nazwisko) {
+    public Holiday(LocalDate startUrlopu, LocalDate koniecUrlopu, boolean akceptacja, int pracownikId, String email) {
         this.startUrlopu = startUrlopu;
         this.koniecUrlopu = koniecUrlopu;
         this.akceptacja = akceptacja;

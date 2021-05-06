@@ -93,11 +93,11 @@ public class UserrServlet extends HttpServlet {
                     List<Holiday> myLeaves = null;
                     try {
 
-                        myLeaves = dbUtill.getUserHolidays(name);
+                        myLeaves = dbUtill.getUserHolidays();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    request.setAttribute("myLeaves", myLeaves);
+                    request.setAttribute("MYLEAVES", myLeaves);
                     dispatcher.forward(request, response);
 //                } else {
 //                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
@@ -149,19 +149,23 @@ public class UserrServlet extends HttpServlet {
     }
 
     private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
+
         LocalDate start =  LocalDate.parse(request.getParameter("start"));
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
-        boolean akceptacja =  false;
+//        boolean akceptacja =  false;
         int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
         int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
-        String name = nameUndVorname;
+        String email = nameUndVorname;
 
         if (limitDni(nameUndVorname,days)){
-
-            Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
+            Holiday holiday = new Holiday(start,end, false,idEmploy,email);
             dbUtill.addHoliday(holiday);
+//            RequestDispatcher dispatcher = request.getRequestDispatcher("UserrServlet");
+//            dispatcher.forward(request,response);
+            listHoliday(request,response);
         } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/AddLeave.jsp");
+            dispatcher.forward(request,response);
         }
 
     }
@@ -192,10 +196,10 @@ public class UserrServlet extends HttpServlet {
 
     private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<Holiday> holidayList = dbUtill.getUserHolidays(nameUndVorname);
+        List<Holiday> holidayList = dbUtill.getUserHolidays();
 
         // dodanie listy do obiektu zadania
-        request.setAttribute("myLeaves", holidayList);
+        request.setAttribute("MYLEAVES", holidayList);
 
         // dodanie request dispatcher
         RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");

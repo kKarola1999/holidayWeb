@@ -16,6 +16,8 @@ import java.util.List;
 @WebServlet(name = "AdminServlet", value = "/AdminServlet")
 public class AdminServlet extends HttpServlet {
     private HolidayUtill dbUtil;
+    private String password;
+    private String email;
     private final String db_url = "jdbc:mysql://localhost:3306/holiday?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
 
 
@@ -72,13 +74,13 @@ public class AdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
 
-        String name = request.getParameter("inputLogin");
-        String password = request.getParameter("inputPassword");
+        email = request.getParameter("inputLogin");
+         password = request.getParameter("inputPassword");
 
-        dbUtil.setName(name);
+        dbUtil.setName(email);
         dbUtil.setPassword(password);
 
-        if (validate(name, password)) {
+        if (validate(email, password)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/adminLeaves.jsp");
 
             List<Holiday> holidayList = null;
