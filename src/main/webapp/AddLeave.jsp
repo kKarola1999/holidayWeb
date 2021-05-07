@@ -88,7 +88,11 @@
             					</div>
 
             					<div class="row">
+
             						<div class="col-sm-8 col-sm-offset-4">
+
+<%--                                        onclick="if(!(confirm('Czy na pewno chcesz usunąć ten urlop?'))) return false">--%>
+
             							<button type="submit" class="btn btn-primary">Apply Leave</button>
             							<a><button type="button" class="btn btn-default">Cancel</button></a>
             						</div>

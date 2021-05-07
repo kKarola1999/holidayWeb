@@ -333,7 +333,7 @@ public class EmployeUtill extends DBEmployee {
             conn = DriverManager.getConnection(URL, email, password);
 
             // zapytanie UPDATE
-            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=? "+
+            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=?, akceptacja = 0 "+
                     "WHERE idUrlopy =?";
 
             statement = conn.prepareStatement(sql);

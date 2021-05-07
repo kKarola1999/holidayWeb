@@ -6,6 +6,8 @@ import com.example.holidayWeb.Holiday;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -55,7 +57,7 @@ public class UserrServlet extends HttpServlet {
                     break;
 
                 case "UPDATE":
-                    updatePhone(request, response);
+                    updateHoliday(request, response);
                     break;
 
                 case "DELETE":
@@ -99,28 +101,39 @@ public class UserrServlet extends HttpServlet {
                     }
                     request.setAttribute("myLeaves", myLeaves);
                     dispatcher.forward(request, response);
-//                } else {
-//                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
-//                }
-            } catch (Exception e) {
+                }
+
+             catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
+            dispatcher.include(request, response);
         }
     }
 
 
-    private void updatePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+    private void updateHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie danych z formularza
         int id = Integer.parseInt(request.getParameter("holidayID"));
-        LocalDate startUrlopu = LocalDate.parse(request.getParameter("start"));
-        LocalDate koniecUrlopu = LocalDate.parse(request.getParameter("end"));
+        LocalDate start = LocalDate.parse(request.getParameter("start"));
+        LocalDate end = LocalDate.parse(request.getParameter("end"));
+        int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
 
+        if (limitDni(nameUndVorname,days) && start.isBefore(end)){
 
+            // uaktualnienie danych w BD
+            dbUtill.updateHoliday(start, end,id);
+        } else {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+//            dispatcher.include();
+        }
 
 
         // uaktualnienie danych w BD
-        dbUtill.updateHoliday(startUrlopu,koniecUrlopu,id);
+//        dbUtill.updateHoliday(start, end,id);
 
         // wyslanie danych do strony z lista telefonow
         listHoliday(request, response);
@@ -172,6 +185,7 @@ public class UserrServlet extends HttpServlet {
             dbUtill.addHoliday(holiday);
         } else {
             RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+//            dispatcher.include();
         }
         listHoliday(request, response);
 
