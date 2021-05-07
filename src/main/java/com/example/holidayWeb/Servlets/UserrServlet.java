@@ -3,31 +3,52 @@ package com.example.holidayWeb.Servlets;
 import com.example.holidayWeb.DBUtill.EmployeUtill;
 import com.example.holidayWeb.Holiday;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
+import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @WebServlet(name = "UserrServlet", value = "/UserrServlet")
 public class UserrServlet extends HttpServlet {
+    private DataSource dataSource;
     private EmployeUtill dbUtill;
-    private final String db_url = "jdbc:mysql://localhost:3306/holiday?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
-    private String nameUndVorname = "";
-    private String emploPass ="";
+    private String name ="";
+    private String password ="";
 
+    public UserrServlet() {
+
+        // Obtain our environment naming context
+        Context initCtx = null;
+        try {
+            initCtx = new InitialContext();
+            Context envCtx = (Context) initCtx.lookup("java:comp/env");
+            // Look up our data source
+            dataSource = (DataSource)
+                    envCtx.lookup("jdbc/holiday_web");
+
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
-    public void init (ServletConfig config) throws ServletException{
-        super.init(config);
-        try{
-            dbUtill =  new EmployeUtill(db_url);
-        }catch (Exception e ){
-            throw new SecurityException(e);
+    public void init (ServletConfig config) throws ServletException {
+        // Obtain our environment naming context
+        super.init();
+
+        try {
+
+            dbUtill = new EmployeUtill(dataSource) {
+            };
+
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
     @Override
@@ -77,36 +98,34 @@ public class UserrServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
 
-        String name = request.getParameter("inputEmail");
-        String password = request.getParameter("inputPassword");
+        name = request.getParameter("inputEmail");
+        password = request.getParameter("inputPassword");
 
-        nameUndVorname = name;
-        emploPass = password;
 
-        dbUtill.setEmail(name);
-        dbUtill.setPassword(password);
 
-        if (validate(name, password)) {
+
             try {
-//                if (password.equals(dbUtill.getPassword(name))) {
+                if (dbUtill.getPassword(name,password)==false) {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/myLeaves.jsp");
                     List<Holiday> myLeaves = null;
                     try {
 
-                        myLeaves = dbUtill.getUserHolidays();
+                        myLeaves = dbUtill.getUserHolidays(name,password);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     request.setAttribute("myLeaves", myLeaves);
                     dispatcher.forward(request, response);
-//                } else {
-//                    RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
-//                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                } else {
+                   RequestDispatcher dispatcher = request.getRequestDispatcher("login.html");
+                    dispatcher.forward(request, response);
+                }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
         }
-    }
+
 
 
     private void updatePhone(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -163,12 +182,12 @@ public class UserrServlet extends HttpServlet {
         LocalDate end =  LocalDate.parse(request.getParameter("end"));
         boolean akceptacja =  false;
         int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
-        int idEmploy = dbUtill.getId(nameUndVorname, emploPass) ;
-        String name = nameUndVorname;
+        int idEmploy = dbUtill.getId(name,password) ;
 
-        if (limitDni(nameUndVorname,days)){
 
-            Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,nameUndVorname);
+        if (limitDni(name,days,password)){
+
+            Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,name);
             dbUtill.addHoliday(holiday);
         } else {
             RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
@@ -176,8 +195,8 @@ public class UserrServlet extends HttpServlet {
         listHoliday(request, response);
 
     }
-    private boolean limitDni (String email, long days) throws Exception {
-        int usedDays = dbUtill.usedDays(email);
+    private boolean limitDni (String email, long days, String pasword) throws Exception {
+        int usedDays = dbUtill.usedDays(email,pasword);
         boolean flaga = false;
         if (dbUtill.getStaz(email)>=10 && days+usedDays<=26){ // todo dokonczyć dla wszystkich urlopów
             flaga =true;
@@ -203,7 +222,7 @@ public class UserrServlet extends HttpServlet {
 
     private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<Holiday> holidayList = dbUtill.getUserHolidays();
+        List<Holiday> holidayList = dbUtill.getUserHolidays(name,password);
 
         // dodanie listy do obiektu zadania
         request.setAttribute("myLeaves", holidayList);
@@ -216,23 +235,6 @@ public class UserrServlet extends HttpServlet {
 
     }
 
-    private  boolean validate (String email, String password){
-        boolean status =  false;
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Connection connection =  null;
-
-        try{
-            connection = DriverManager.getConnection(db_url,email,password);
-            status = true;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }return status;
-    }
 
 
 

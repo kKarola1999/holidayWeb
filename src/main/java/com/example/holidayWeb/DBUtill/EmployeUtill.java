@@ -13,48 +13,50 @@ import java.util.List;
 
 public class EmployeUtill extends DBEmployee {
     private DataSource dataSource;
-    private String URL;
-    private String email;
-    private String password;
-    public EmployeUtill (String URL){this.URL = URL; }
+
+    public EmployeUtill(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
 
     @Override
-    public List<Employee> getEmployes() throws Exception{
-        List<Employee> employes  =  new ArrayList<>();
-        Connection connection =  null;
-        Statement statement =  null;
+    public List<Employee> getEmployes() throws Exception {
+        List<Employee> employes = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
         ResultSet resultSet = null;
 
         try {
-            connection = DriverManager.getConnection(URL,email,password);
-            String sql =  "SELECT * FROM pracownicy";
-            statement =  connection.createStatement();
-            resultSet =  statement.executeQuery(sql);
+            connection = dataSource.getConnection();
+            String sql = "SELECT * FROM pracownicy";
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("imie_nazwisko");
                 int staz = resultSet.getInt("staz");
                 int extraDays = resultSet.getInt("dodatkowe_dni");
-                String jobTime =  resultSet.getString("etat");
-                String  password = resultSet.getString("password");
+                String jobTime = resultSet.getString("etat");
+                String password = resultSet.getString("password");
                 String email = resultSet.getString("email");
 
-                employes.add(new Employee(id, name,staz,jobTime,extraDays,email, password));
+                employes.add(new Employee(id, name, staz, jobTime, extraDays, email, password));
             }
-        }finally {
-            close(connection, statement,resultSet);
-        } return employes;
+        } finally {
+            close(connection, statement, resultSet);
+        }
+        return employes;
     }
-    public int getId(String emailE, String pass) throws Exception{
+
+    public int getId(String emailE, String pass) throws Exception {
         int id;
         Connection connection = null;
-        PreparedStatement statement =null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
-            connection = DriverManager.getConnection(URL,email,password);
+            connection = dataSource.getConnection();
             String sql = "Select id from pracownicy where email = ? and password = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, emailE);
@@ -64,39 +66,43 @@ public class EmployeUtill extends DBEmployee {
                 id = resultSet.getInt("id");
             } else {
                 throw new Exception("There is not such user!");
-            } return id;
+            }
+            return id;
         } finally {
-            close(connection,statement,resultSet);
+            close(connection, statement, resultSet);
         }
 
     }
 
-    public String getPassword(String emailE) throws Exception{
-        Connection connection =null;
-        PreparedStatement statement =null;
-        ResultSet resultSet =null;
-        String DBpass ;
-        try{
-            connection=DriverManager.getConnection(URL, email, password);
-            String sql = "select password from pracownicy where email =?";
+    public Boolean getPassword(String email1, String password1) throws Exception {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Boolean DBpass;
+        try {
+            connection = dataSource.getConnection();
+            String sql = "select password,email from pracownicy where email =? and password=?";
             statement = connection.prepareStatement(sql);
-            statement.setString(1, emailE);
-            if (resultSet.first()){
-                DBpass = resultSet.getString("password");
+            statement.setString(1, email1);
+            statement.setString(2, password1);
+            resultSet = statement.executeQuery();
+            if (!resultSet.next()) {
+                DBpass = true;
             } else {
-                throw new Exception("Wrong email or password.");
+                DBpass = false;
             }
             return DBpass;
-        }finally {
-            close(connection,statement,resultSet);
+        } finally {
+            close(connection, statement, resultSet);
         }
     }
-    public int usedDays(String email){
-        int days =0;
+
+    public int usedDays(String email, String password) {
+        int days = 0;
         try {
-            List<Holiday> holidays =  getUserHolidays();
-            for (int i = 0; i<holidays.size();i++ ){
-                days = (int) ChronoUnit.DAYS.between(holidays.get(i).getStartUrlopu(), holidays.get(i).getKoniecUrlopu())+1;
+            List<Holiday> holidays = getUserHolidays(email, password);
+            for (int i = 0; i < holidays.size(); i++) {
+                days = (int) ChronoUnit.DAYS.between(holidays.get(i).getStartUrlopu(), holidays.get(i).getKoniecUrlopu()) + 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,69 +110,72 @@ public class EmployeUtill extends DBEmployee {
         return days;
     }
 
-    public List<Holiday> getUserHolidays () throws Exception{
+    public List<Holiday> getUserHolidays(String email1, String password1) throws Exception {
 
-        List <Holiday> holiday = new ArrayList<>();
+        List<Holiday> holiday = new ArrayList<>();
 
-        Connection connection =  null;
+        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
-        try{
+        try {
 
 
-            connection = DriverManager.getConnection(URL, email, password);
+            connection = dataSource.getConnection();
 
-            String sql = "SELECT * FROM urlopy where email = ?";
+            int id = getId(email1, password1);
+
+            String sql = "SELECT * FROM urlopy where Pracownicy_id = ? ";
             statement = connection.prepareStatement(sql);
-            statement.setString(1,email);
-            resultSet =  statement.executeQuery();
+            statement.setInt(1, id);
 
-            while (resultSet.next()){
-                int idUrlopy =  resultSet.getInt("idUrlopy");
-                LocalDate start =  resultSet.getDate("start_urlopu").toLocalDate();
-                LocalDate end =  resultSet.getDate("end_urlopu").toLocalDate();
-                boolean akceptacja =  resultSet.getBoolean("akceptacja");
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int idUrlopy = resultSet.getInt("idUrlopy");
+                LocalDate start = resultSet.getDate("start_urlopu").toLocalDate();
+                LocalDate end = resultSet.getDate("end_urlopu").toLocalDate();
+                boolean akceptacja = resultSet.getBoolean("akceptacja");
                 int idPracownika = resultSet.getInt("Pracownicy_id");
                 String name = resultSet.getString("email");
 
-                holiday.add( new Holiday(idUrlopy,start,end,akceptacja,idPracownika, name));
+                holiday.add(new Holiday(idUrlopy, start, end, akceptacja, idPracownika, name));
             }
 
-        }finally {
-            close(connection, statement,resultSet);
-        }return holiday;
+        } finally {
+            close(connection, statement, resultSet);
+        }
+        return holiday;
 
     }
 
-    public void addHoliday(Holiday holiday)throws Exception{
-        Connection connection =null;
-        PreparedStatement statement=null;
+    public void addHoliday(Holiday holiday) throws Exception {
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
-            connection = DriverManager.getConnection(URL,email, password);
-            String sql = "Insert into urlopy (start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)"+ //todo Pracownicy_id?
+            connection = dataSource.getConnection();
+            String sql = "Insert into urlopy (start_urlopu, end_urlopu, akceptacja, Pracownicy_id ,email)" + //todo Pracownicy_id?
                     "VALUES(?, ?, ?, ?, ?)";
-            statement= connection.prepareStatement(sql);
+            statement = connection.prepareStatement(sql);
 
             statement.setString(1, (holiday.getStartUrlopu()).toString());
             statement.setString(2, (holiday.getKoniecUrlopu().toString()));
 //            statement.setDate(2, Date.valueOf(holiday.getKoniecUrlopu()));
             statement.setBoolean(3, holiday.isAkceptacja());
-            statement.setInt(4,holiday.getPracownikId());
+            statement.setInt(4, holiday.getPracownikId());
             statement.setString(5, holiday.getEmail());
             statement.execute();
-        }finally {
-            close(connection,statement,null);
+        } finally {
+            close(connection, statement, null);
         }
     }
 
     public Holiday getHoliday(String id) throws Exception {
-        Connection conn =null;
-        PreparedStatement statement=null;
+        Connection conn = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
 
-        Holiday holiday= null;
-
+        Holiday holiday = null;
 
 
         try {
@@ -175,7 +184,7 @@ public class EmployeUtill extends DBEmployee {
             int holidayID = Integer.parseInt(id);
 
             // polaczenie z BD
-            conn = DriverManager.getConnection(URL, email, password);
+            conn = dataSource.getConnection();
 
             // zapytanie SELECT
             String sql = "SELECT * FROM urlopy WHERE idUrlopy =?";
@@ -198,7 +207,7 @@ public class EmployeUtill extends DBEmployee {
                 String email = resultSet.getString("email");
 
                 // utworzenie obiektu
-                holiday = new Holiday(holidayID, startUrlopu, koniecUrlopu,akceptacja,pracownikID,email);
+                holiday = new Holiday(holidayID, startUrlopu, koniecUrlopu, akceptacja, pracownikID, email);
 
 
             } else {
@@ -217,10 +226,9 @@ public class EmployeUtill extends DBEmployee {
     }
 
 
-
     public LocalDate getEndDate(String id) throws Exception {
 
-        LocalDate endDate= LocalDate.parse("2020-01-01");
+        LocalDate endDate = LocalDate.parse("2020-01-01");
 
         Connection conn = null;
         PreparedStatement statement = null;
@@ -232,7 +240,7 @@ public class EmployeUtill extends DBEmployee {
             int holidayID = Integer.parseInt(id);
 
             // polaczenie z BD
-            conn = DriverManager.getConnection(URL, email, password);
+            conn = dataSource.getConnection();
 
             // zapytanie SELECT
             String sql = "SELECT end_urlopu FROM urlopy WHERE idUrlopy =?";
@@ -272,7 +280,7 @@ public class EmployeUtill extends DBEmployee {
 
     public LocalDate getStartDate(String id) throws Exception {
 
-        LocalDate startDate= LocalDate.parse("2020-01-01");
+        LocalDate startDate = LocalDate.parse("2020-01-01");
 
         Connection conn = null;
         PreparedStatement statement = null;
@@ -284,7 +292,7 @@ public class EmployeUtill extends DBEmployee {
             int holidayID = Integer.parseInt(id);
 
             // polaczenie z BD
-            conn = DriverManager.getConnection(URL, email, password);
+            conn = dataSource.getConnection();
 
             // zapytanie SELECT
             String sql = "SELECT start_urlopu FROM urlopy WHERE idUrlopy =?";
@@ -322,7 +330,7 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
-    public void updateHoliday(LocalDate start,LocalDate end,int id) throws Exception {
+    public void updateHoliday(LocalDate start, LocalDate end, int id) throws Exception {
 
         Connection conn = null;
         PreparedStatement statement = null;
@@ -330,16 +338,16 @@ public class EmployeUtill extends DBEmployee {
         try {
 
             // polaczenie z BD
-            conn = DriverManager.getConnection(URL, email, password);
+            conn = dataSource.getConnection();
 
             // zapytanie UPDATE
-            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=? "+
+            String sql = "UPDATE urlopy SET start_urlopu=?, end_urlopu=? " +
                     "WHERE idUrlopy =?";
 
             statement = conn.prepareStatement(sql);
             statement.setDate(1, Date.valueOf(start));
             statement.setDate(2, Date.valueOf(end));
-            statement.setInt(3,id);
+            statement.setInt(3, id);
 
 
             // wykonanie zapytania
@@ -365,7 +373,7 @@ public class EmployeUtill extends DBEmployee {
             int holidayID = Integer.parseInt(id);
 
             // polaczenie z BD
-            conn = DriverManager.getConnection(URL, email, password);
+            conn = dataSource.getConnection();
 
             // zapytanie DELETE
             String sql = "DELETE FROM urlopy WHERE idUrlopy =?";
@@ -385,28 +393,26 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
-    public int getStaz(String emailE)throws Exception{
-        Connection connection =null;
-        PreparedStatement statement =null;
-        ResultSet resultSet =null;
+    public int getStaz(String emailE) throws Exception {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         int staz;
-        try{
-            connection=DriverManager.getConnection(URL, email, password);
+        try {
+            connection = dataSource.getConnection();
             String sql = "select staz from pracownicy where email = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, emailE);
             resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 staz = resultSet.getInt("staz");
             } else {
                 throw new Exception("smoething went wrong");
             }
             return staz;
-        }finally {
-            close(connection,statement,resultSet);
+        } finally {
+            close(connection, statement, resultSet);
         }
     }
-
-    public void setEmail(String email){this.email = email;}
-    public void setPassword(String password){this.password = password;}
 }
+

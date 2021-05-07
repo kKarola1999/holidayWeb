@@ -19,27 +19,30 @@
   </head>
 
   <body class="text-center">
+  <form action="EmployeeServlet" method="get">
+    <input type="hidden" name="command" value="ADD">
     <form class="form-signin">
       <img class="mb-4" src="calendar-event.svg" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
       <label for="inputName" class="sr-only">Name</label>
-      <input type="name" id="inputName" class="form-control" placeholder="Name" required autofocus>
+      <input type="name" id="inputName" class="form-control" placeholder="Name" name="name" required autofocus>
       <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" required autofocus>
       <label for="inputSeniority" class="sr-only">Seniority</label>
-      <input type="seniority" id="inputSeniority" class="form-control" placeholder="Seniority" required autofocus>
+      <input type="seniority" id="inputSeniority" class="form-control" placeholder="Seniority" name="seniority"required autofocus>
       <label for="inputJobPosition" class="sr-only">Job Position</label>
-      <input type="jobPosition" id="inputJobPosition" class="form-control" placeholder="Job position" required autofocus>
+      <input type="jobPosition" id="inputJobPosition" class="form-control" placeholder="Job position" name="etat" required autofocus>
 
       <label for="inputExtraDays" class="sr-only">Extra days</label>
-      <input type="extraDays" id="inputExtraDays" class="form-control" placeholder="Extra days" required autofocus>
+      <input type="extraDays" id="inputExtraDays" class="form-control" placeholder="Extra days" name="extraDays" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required autofocus>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password"required autofocus>
 
 
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" href="index.html">Sign up
+      </button>
       <div class="form-group"/>
-
+    </form>
 
     </form>
   </body>
