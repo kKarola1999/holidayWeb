@@ -40,9 +40,7 @@
                 <li>
                     <a href="index.html">Logout</a>
                 </li>
-                <li>
-                    <a href="adminLeaves.jsp">Leaves</a>
-                </li>
+
             </ul>
 
 

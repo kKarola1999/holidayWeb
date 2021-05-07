@@ -45,9 +45,7 @@
                 <li>
                     <a href="AddLeave.jsp">Apply Leave</a>
                 </li>
-                <li>
-                    <a href="myLeaves.jsp">My Leaves</a>
-                </li>
+
             </ul>
 
 

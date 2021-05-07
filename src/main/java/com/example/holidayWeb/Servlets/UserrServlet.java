@@ -1,6 +1,7 @@
 package com.example.holidayWeb.Servlets;
 
 import com.example.holidayWeb.DBUtill.EmployeUtill;
+import com.example.holidayWeb.Employee;
 import com.example.holidayWeb.Holiday;
 
 import javax.naming.Context;
@@ -22,12 +23,12 @@ import java.util.List;
 
 @WebServlet(name = "UserrServlet", value = "/UserrServlet")
 public class UserrServlet extends HttpServlet {
+    private DataSource dataSource;
     private EmployeUtill dbUtill;
-    private final String db_url = "jdbc:mysql://localhost:3306/holiday?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
-    private String nameUndVorname = "";
-    private String emploPass ="";
+    private String name ="";
+    private String password ="";
 
-        // Obtain our environment naming context
+    public UserrServlet() {
         Context initCtx = null;
         try {
             initCtx = new InitialContext();
@@ -40,13 +41,20 @@ public class UserrServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-    @Override
-    public void init (ServletConfig config) throws ServletException{
-        super.init(config);
-        try{
-            dbUtill =  new EmployeUtill(db_url);
-        }catch (Exception e ){
-            throw new SecurityException(e);
+
+
+
+    public void init (ServletConfig config) throws ServletException {
+        // Obtain our environment naming context
+        super.init();
+
+        try {
+
+            dbUtill = new EmployeUtill(dataSource) {
+            };
+
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
     @Override
@@ -68,6 +76,9 @@ public class UserrServlet extends HttpServlet {
                 case "ADD":
                     addHoliday(request, response);
                     break;
+                case "ADDE":
+                    addEmployee(request,response);
+                    break;
 
                 case "LOAD":
                     loadHoliday(request, response);
@@ -75,6 +86,7 @@ public class UserrServlet extends HttpServlet {
 
                 case "UPDATE":
                     updateHoliday(request, response);
+
                     break;
 
                 case "DELETE":
@@ -123,7 +135,7 @@ public class UserrServlet extends HttpServlet {
                 }
 
         }
-    }
+
 
 
 
@@ -135,13 +147,15 @@ public class UserrServlet extends HttpServlet {
         LocalDate end = LocalDate.parse(request.getParameter("end"));
         int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
 
-        if (limitDni(nameUndVorname,days) && start.isBefore(end)){
+        if (limitDni(name,days,password) && start.isBefore(end)){
 
             // uaktualnienie danych w BD
             dbUtill.updateHoliday(start, end,id);
+            listHoliday(request, response);
         } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
-//            dispatcher.include();
+            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.jsp");
+            listHoliday(request, response);
+
         }
 
 
@@ -149,9 +163,17 @@ public class UserrServlet extends HttpServlet {
 //        dbUtill.updateHoliday(start, end,id);
 
         // wyslanie danych do strony z lista telefonow
-        listHoliday(request, response);
+//        listHoliday(request, response);
 
     }
+
+
+
+
+        // wyslanie danych do strony z lista telefonow
+
+
+
     private void loadHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie id telefonu z formularza
@@ -184,33 +206,57 @@ public class UserrServlet extends HttpServlet {
 
 
 
-    private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        LocalDate start =  LocalDate.parse(request.getParameter("start"));
-        LocalDate end =  LocalDate.parse(request.getParameter("end"));
-        boolean akceptacja =  false;
-        int days  = (int) ChronoUnit.DAYS.between(start,end)+1;
-        int idEmploy = dbUtill.getId(name,password) ;
 
-        if (limitDni(nameUndVorname,days) && start.isBefore(end)){
 
-        if (limitDni(name,days,password)){
+    private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LocalDate start = LocalDate.parse(request.getParameter("start"));
+        LocalDate end = LocalDate.parse(request.getParameter("end"));
+        boolean akceptacja = false;
+        int days = (int) ChronoUnit.DAYS.between(start, end) + 1;
+        int idEmploy = dbUtill.getId(name, password);
 
-            Holiday holiday = new Holiday(start,end,akceptacja,idEmploy,name);
+        if (limitDni(name,days,password) && start.isBefore(end)) {
+
+
+            Holiday holiday = new Holiday(start, end, akceptacja, idEmploy, name);
             dbUtill.addHoliday(holiday);
         } else {
-            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.html");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("AddLeave.jsp");
         }
         listHoliday(request, response);
 
     }
+    private void addEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // odczytanie danych z formularza
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        int seniority = Integer.parseInt(request.getParameter("seniority"));
+        String etat = request.getParameter("etat");
+        int extraDays = Integer.parseInt(request.getParameter("extraDays"));
+        String password = request.getParameter("password");
+
+        // utworzenie obiektu klasy Phone
+        Employee employee=new Employee(name,seniority,etat,extraDays,email,password);
+
+        // dodanie nowego obiektu do BD
+        dbUtill.addEmployee(employee);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.html");
+        dispatcher.forward(request, response);
+
+
+    }
+
     private boolean limitDni (String email, long days, String pasword) throws Exception {
         int usedDays = dbUtill.usedDays(email,pasword);
         boolean flaga = false;
-        if (dbUtill.getStaz(email)>=10 && days+usedDays<=26){ // todo dokonczyć dla wszystkich urlopów
+        if (dbUtill.getStaz(email,password)>=10 && days+usedDays<=26){ // todo dokonczyć dla wszystkich urlopów
             flaga =true;
-        }else if(dbUtill.getStaz(email)<10 && days+usedDays<=20){flaga = true;}
+        }else if(dbUtill.getStaz(email,password)<10 && days+usedDays<=20){flaga = true;}
         return flaga;
     }
+
 
 
     private void deleteHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
