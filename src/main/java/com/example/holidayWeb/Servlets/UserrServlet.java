@@ -103,7 +103,14 @@ public class UserrServlet extends HttpServlet {
 
     }
 
-
+    /**
+     * this method is checking if user which is looging exist in database. If not it is resetting login.html view.
+     * If there exist user then it is opening myLeaves site.
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -137,8 +144,12 @@ public class UserrServlet extends HttpServlet {
         }
 
 
-
-
+    /**
+     * This method  let users changing theirs leaves dates. It is getting params from update_holiday_form.jsp.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void updateHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie danych z formularza
@@ -159,55 +170,41 @@ public class UserrServlet extends HttpServlet {
         }
 
 
-        // uaktualnienie danych w BD
-//        dbUtill.updateHoliday(start, end,id);
-
-        // wyslanie danych do strony z lista telefonow
-//        listHoliday(request, response);
-
     }
 
-
-
-
-        // wyslanie danych do strony z lista telefonow
-
-
-
+    /**
+     * This method is sending data of chosen holiday to update_holiday_user_form.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void loadHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // odczytanie id telefonu z formularza
         String id = request.getParameter("holidayID");
 
-        // pobranie  danych telefonu z BD
         Holiday holiday = dbUtill.getHoliday(id);
-
-
-
 
         LocalDate startDate = dbUtill.getStartDate(id);
         LocalDate endDate = dbUtill.getEndDate(id);
 
-
-
-
-        // przekazanie telefonu do obiektu request
         request.setAttribute("HOLIDAY", holiday);
         request.setAttribute("holidayID", id);
         request.setAttribute("end", endDate);
         request.setAttribute("start", startDate);
-
-        // wyslanie danych do formmularza JSP (update_phone_form)
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday_user_form.jsp");
         dispatcher.forward(request, response);
 
     }
 
-
-
-
-
+    /**
+     * That method allows users to create new requests for leaves. If every thing  is okey it returns user
+     * to site with his leaves, if not it is resetting form for creating new request. This function don't
+     * allow users to create request with incorrect date.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void addHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
         LocalDate start = LocalDate.parse(request.getParameter("start"));
         LocalDate end = LocalDate.parse(request.getParameter("end"));
@@ -226,9 +223,17 @@ public class UserrServlet extends HttpServlet {
         listHoliday(request, response);
 
     }
+
+    /**
+     * This functions allow unregistered users to create their profile.It is getting params from register.jsp,
+     * and then create employee object which is inserting to database.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void addEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // odczytanie danych z formularza
+
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         int seniority = Integer.parseInt(request.getParameter("seniority"));
@@ -236,10 +241,8 @@ public class UserrServlet extends HttpServlet {
         int extraDays = Integer.parseInt(request.getParameter("extraDays"));
         String password = request.getParameter("password");
 
-        // utworzenie obiektu klasy Phone
         Employee employee=new Employee(name,seniority,etat,extraDays,email,password);
 
-        // dodanie nowego obiektu do BD
         dbUtill.addEmployee(employee);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("index.html");
@@ -248,6 +251,14 @@ public class UserrServlet extends HttpServlet {
 
     }
 
+    /**
+     * this function is checking if user do not create leave request without any free days.
+     * @param email
+     * @param days
+     * @param pasword
+     * @return
+     * @throws Exception
+     */
     private boolean limitDni (String email, long days, String pasword) throws Exception {
         int usedDays = dbUtill.usedDays(email,pasword);
         boolean flaga = false;
@@ -258,7 +269,12 @@ public class UserrServlet extends HttpServlet {
     }
 
 
-
+    /**
+     * This method delete chosen leave.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void deleteHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie danych z formularza
@@ -273,7 +289,12 @@ public class UserrServlet extends HttpServlet {
     }
 
 
-
+    /**
+     * Getting all user  leaves.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         List<Holiday> holidayList = dbUtill.getUserHolidays(name,password);

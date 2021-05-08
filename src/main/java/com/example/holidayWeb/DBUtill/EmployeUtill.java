@@ -18,7 +18,11 @@ public class EmployeUtill extends DBEmployee {
         this.dataSource = dataSource;
     }
 
-
+    /**
+     * this method collect all users from database.
+     * @return
+     * @throws Exception
+     */
     @Override
     public List<Employee> getEmployes() throws Exception {
         List<Employee> employes = new ArrayList<>();
@@ -49,6 +53,13 @@ public class EmployeUtill extends DBEmployee {
         return employes;
     }
 
+    /**
+     * this function returning id of logged user from DB.
+     * @param emailE
+     * @param pass
+     * @return int Id
+     * @throws Exception
+     */
     public int getId(String emailE, String pass) throws Exception {
         int id;
         Connection connection = null;
@@ -74,6 +85,13 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    /**
+     * This method is checking if email and password writed in login menu is corect.
+     * @param email1
+     * @param password1
+     * @return DBpass = true if user exist in DB, false if not.
+     * @throws Exception
+     */
     public Boolean getPassword(String email1, String password1) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -97,6 +115,12 @@ public class EmployeUtill extends DBEmployee {
         }
     }
 
+    /**
+     * This function is summing duration of all holidays.
+     * @param email
+     * @param password
+     * @return days - all used days from every user's holidays.
+     */
     public int usedDays(String email, String password) {
         int days = 0;
         try {
@@ -110,6 +134,14 @@ public class EmployeUtill extends DBEmployee {
         return days;
     }
 
+    /**
+     * Creating List of user holidays. Searching table urlopy  by Pracownik_id and creating Objects holiday which are
+     * added to List.
+     * @param email1
+     * @param password1
+     * @return List off all user holiday
+     * @throws Exception
+     */
     public List<Holiday> getUserHolidays(String email1, String password1) throws Exception {
 
         List<Holiday> holiday = new ArrayList<>();
@@ -119,8 +151,6 @@ public class EmployeUtill extends DBEmployee {
         ResultSet resultSet = null;
 
         try {
-
-
             connection = dataSource.getConnection();
 
             int id = getId(email1, password1);
@@ -149,6 +179,11 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    /**
+     * Creating SQL syntax to insert into table urlopy new leave.
+     * @param holiday
+     * @throws Exception
+     */
     public void addHoliday(Holiday holiday) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -172,6 +207,11 @@ public class EmployeUtill extends DBEmployee {
         }
     }
 
+    /**
+     * Creating new SQL syntax to create new employee in table pracownicy.
+     * @param employee
+     * @throws Exception
+     */
     public void addEmployee(Employee employee) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -193,6 +233,12 @@ public class EmployeUtill extends DBEmployee {
         }
     }
 
+    /**
+     * This function is collecting data for chosen leave by idUrlopy. From this data this method creates holiday object.
+     * @param id
+     * @return object Holiday
+     * @throws Exception
+     */
     public Holiday getHoliday(String id) throws Exception {
         Connection conn = null;
         PreparedStatement statement = null;
@@ -248,7 +294,12 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
-
+    /**
+     * This function is getting date when chosen leave end.
+     * @param id
+     * @return endDate -  date when holiday finished
+     * @throws Exception
+     */
     public LocalDate getEndDate(String id) throws Exception {
 
         LocalDate endDate = LocalDate.parse("2020-01-01");
@@ -300,7 +351,12 @@ public class EmployeUtill extends DBEmployee {
         }
 
     }
-
+    /**
+     * This function is getting date when chosen leave start.
+     * @param id
+     * @return endDate -  date when holiday start
+     * @throws Exception
+     */
     public LocalDate getStartDate(String id) throws Exception {
 
         LocalDate startDate = LocalDate.parse("2020-01-01");
@@ -353,6 +409,13 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    /**
+     * this function create new SQL syntax to update chosen leave in table urlopy
+     * @param start - start day
+     * @param end -  end date
+     * @param id - holiday id
+     * @throws Exception
+     */
     public void updateHoliday(LocalDate start, LocalDate end, int id) throws Exception {
 
         Connection conn = null;
@@ -384,89 +447,43 @@ public class EmployeUtill extends DBEmployee {
 
     }
 
+    /**
+     * Create delete SQL syntax for urlopy table.
+     * @param id
+     * @throws Exception
+     */
     public void deleteHoliday(String id) throws Exception {
 
         Connection conn = null;
         PreparedStatement statement = null;
 
         try {
-
-            // konwersja id na liczbe
             int holidayID = Integer.parseInt(id);
 
-            // polaczenie z BD
             conn = dataSource.getConnection();
 
-            //String sql = "DELETE FROM urlopy WHERE idUrlopy =?";
+
             String sql = "UPDATE urlopy SET to_delete = 1 where idUrlopy = ?";
 
             statement = conn.prepareStatement(sql);
             statement.setInt(1, holidayID);
 
-            // wykonanie zapytania
+
             statement.execute();
 
         } finally {
-
-            // zamkniecie obiektow JDBC
             close(conn, statement, null);
 
         }
     }
 
-    public void adminDeleteHoliday (String id) throws Exception{
-        Connection  connection = null;
-        PreparedStatement statement = null;
-
-        try{
-            int idUrlopy =  Integer.parseInt(id);
-
-            connection = dataSource.getConnection();
-
-            String sql = ("DELETE FROM urlopy WHERE idUrlopy = ?");
-            statement = connection.prepareStatement(sql);
-            statement.setInt(1, idUrlopy);
-
-            statement.execute();
-
-        }   finally {
-            close(connection,statement,null);
-        }
-
-    }
-
-
-    public List <Holiday> getHolidayToDelete () throws  Exception{
-            List <Holiday> toDelete =  new ArrayList<>();
-            Connection connection = null;
-            Statement statement= null;
-            ResultSet resultSet= null;
-
-            try{
-                connection =  dataSource.getConnection();
-                String sql =  "Select * From urlopy where to_delete = 1";
-                statement = connection.createStatement();
-                resultSet = statement.executeQuery(sql);
-
-                while (resultSet.next()){
-                    int id = resultSet.getInt("idUrlopy");
-                    LocalDate start_urlopu = resultSet.getDate("start_urlopu").toLocalDate();
-                    LocalDate end_urlopu = resultSet.getDate("end_urlopu").toLocalDate();
-                    boolean akceptacja = resultSet.getBoolean("akceptacja");
-                    int idPracownika = resultSet.getInt("Pracownicy_id");
-                    String email = resultSet.getString("email");
-
-                    toDelete.add(new Holiday(id,start_urlopu,end_urlopu,akceptacja,idPracownika,email));
-                }
-
-            }finally {
-                close(connection,statement,resultSet);
-            }
-            return toDelete;
-        }
-
-
-
+    /**
+     * This method is getting information about how long employee work from table pracownicy.
+     * @param emailE
+     * @param password
+     * @return staz
+     * @throws Exception
+     */
     public int getStaz(String emailE,String password) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
