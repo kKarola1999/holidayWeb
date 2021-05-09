@@ -3,7 +3,7 @@
     <Resource name="jdbc/holiday_web"
               auth="Container" type="javax.sql.DataSource"
               maxActive="20" maxIdle="5" maxWait="10000"
-              username="root" password="Kar_kaw123"
+              username="karoli@wp.pl" password="elo"
               driverClassName="com.mysql.cj.jdbc.Driver"
               url="jdbc:mysql://localhost:3306/holiday?serverTimezone=CET" />
 

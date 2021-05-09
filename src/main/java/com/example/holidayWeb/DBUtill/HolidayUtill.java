@@ -15,6 +15,12 @@ public class HolidayUtill extends DBUtil {
         this.URL = URL;
     }
 
+    /**
+     * Returning List of holiday objects from table urlopy in DB.
+     * @return
+     * @throws Exception
+     */
+
     @Override
     public List<Holiday> getHolidays() throws  Exception{
         List<Holiday> urlopy = new ArrayList<>();
@@ -43,6 +49,13 @@ public class HolidayUtill extends DBUtil {
         }
         return urlopy;
     }
+
+    /**
+     * returning holiday obejct from table urlopy of chosen record id.
+     * @param id
+     * @return
+     * @throws Exception
+     */
 
     public Holiday getHoliday(String id) throws Exception {
 
@@ -73,7 +86,7 @@ public class HolidayUtill extends DBUtil {
 
             if (resultSet.next()) {
 
-//                int pid = resultSet.getInt("id");
+
                 LocalDate startUrlopu = resultSet.getDate("start_urlopu").toLocalDate();
                 LocalDate koniecUrlopu = resultSet.getDate("end_urlopu").toLocalDate();
                 boolean akceptacja = resultSet.getBoolean("akceptacja");
@@ -97,6 +110,13 @@ public class HolidayUtill extends DBUtil {
         }
 
     }
+
+    /**
+     * Getting holidays that employees want to be delete, from table urlopy. Creating new Holiday objects
+     * and inserting them to list.
+     * @return
+     * @throws Exception
+     */
 
     public List <Holiday> getHolidayToDelete () throws  Exception{
         List <Holiday> toDelete =  new ArrayList<>();
@@ -126,6 +146,12 @@ public class HolidayUtill extends DBUtil {
         }
         return toDelete;
     }
+    /**
+     * Get data about acceptation of chosen leave.
+     * @param id
+     * @return boolean if accepted
+     * @throws Exception
+     */
 
     public Boolean getStatus(String id) throws Exception {
 
@@ -156,7 +182,7 @@ public class HolidayUtill extends DBUtil {
 
             if (resultSet.next()) {
 
-//                int pid = resultSet.getInt("id");
+
 
                akceptacja = resultSet.getBoolean("akceptacja");
 
@@ -178,6 +204,12 @@ public class HolidayUtill extends DBUtil {
         }
 
     }
+    /**
+     * Changing acceptation in table urlopy to false.
+     * @param akceptacja
+     * @param id
+     * @throws Exception
+     */
 
     public void updateHoliday(Boolean akceptacja, int id) throws Exception {
 
@@ -212,6 +244,11 @@ public class HolidayUtill extends DBUtil {
         }
 
     }
+    /**
+     * this method allows admin to delete holiday for request of employee by creating delete SQL syntax.
+     * @param id
+     * @throws Exception
+     */
     public void adminDeleteHoliday (String id) throws Exception{
         Connection  connection = null;
         PreparedStatement statement = null;

@@ -21,6 +21,12 @@ public class AdminServlet extends HttpServlet {
     private final String db_url = "jdbc:mysql://localhost:3306/holiday?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=CET";
 
 
+    /**
+     * Initialize AdminServlet
+     * @param config
+     * @throws ServletException
+     */
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -75,6 +81,14 @@ public class AdminServlet extends HttpServlet {
 
     }
 
+    /**
+     * this method is checking if person which is trying to login exist. If it is true then it moving to
+     * adminLeaves.jsp site, if not it restart login view.
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -88,7 +102,7 @@ public class AdminServlet extends HttpServlet {
 
         if (validate(email, password)) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/adminLeaves.jsp");
-//            RequestDispatcher dispatcher2 = request.getRequestDispatcher("/toDeleteLeaves.jsp");
+
 
             List<Holiday> holidayList = null;
             List<Holiday> toDelete = null;
@@ -104,7 +118,7 @@ public class AdminServlet extends HttpServlet {
             request.setAttribute("HOLIDAYS_LIST", holidayList);
             request.setAttribute("HOlIDAYS_DELETE", toDelete );
             dispatcher.forward(request, response);
-//            dispatcher2.forward(request,response);
+
         } else {
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("/loginAdmin.html");
@@ -113,6 +127,12 @@ public class AdminServlet extends HttpServlet {
 
 
     }
+    /**
+     * Allow admin to change acceptation for request of chosen holiday.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
 
     private void updateHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -123,30 +143,41 @@ public class AdminServlet extends HttpServlet {
         // uaktualnienie danych w BD
         dbUtil.updateHoliday(akceptacja,id);
 
-        // wyslanie danych do strony z lista telefonow
+        // wyslanie danych do strony z listą urlopów
         listHoliday(request, response);
 
     }
+    /**
+     * Loading chosen holiday data, and initialize update_holiday_form.jsp
+     * @param request
+     * @param response
+     * @throws Exception
+     */
 
     private void loadHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // odczytanie id telefonu z formularza
+        // odczytanie id urlopu z formularza
         String id = request.getParameter("holidayID");
 
-        // pobranie  danych telefonu z BD
+        // pobranie  danych urlopu z BD
         Boolean status = dbUtil.getStatus(id);
 
-        // przekazanie telefonu do obiektu request
+        // przekazanie urlopu do obiektu request
         request.setAttribute("holidayID", id);
         request.setAttribute("Status", status);
 
-        // wyslanie danych do formmularza JSP (update_phone_form)
+        // wyslanie danych do formmularza JSP
         RequestDispatcher dispatcher = request.getRequestDispatcher("/update_holiday_form.jsp");
         dispatcher.forward(request, response);
 
     }
 
-
+    /**
+     * This method call function to create List of holiday objects which is used to create table in adminLeaves site.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void listHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         List<Holiday> holidayList = dbUtil.getHolidays();
@@ -162,28 +193,48 @@ public class AdminServlet extends HttpServlet {
 
     }
 
+    /**
+     * This method call function to create List of holiday objects which is used to create table in adminLeaves site
+     * holidays that were requested to be deleted.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+
     private  void listHolidayToDelete (HttpServletRequest request, HttpServletResponse response) throws  Exception{
         List<Holiday> holidayList = dbUtil.getHolidayToDelete();
         request.setAttribute("HOlIDAYS_DELETE", holidayList);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/adminLeaves.jsp");
         dispatcher.forward(request, response);
-//        deleteHoliday(request,response);
+
     }
+    /**
+     * Allows admin to delete requested holidays.
+     * @param request
+     * @param response
+     * @throws Exception
+     */
 
     private void deleteHoliday(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         // odczytanie danych z formularza
         String id = request.getParameter("holidayID");
 
-        // usuniecie telefonu z BD
+        // usuniecie urlopu z BD
         dbUtil.adminDeleteHoliday(id);
 
         // wyslanie danych do strony
         listHoliday(request, response);
 
     }
+    /**
+     * this method validate if user exist
+     * @param name
+     * @param pass
+     * @return
+     */
 
-    private boolean validate(String name, String pass) {
+private boolean validate(String name, String pass) {
         boolean status = false;
 
         try {
